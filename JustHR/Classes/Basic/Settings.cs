@@ -9,8 +9,7 @@ namespace ShaderPack.Classes
     /// </summary>
     static class Settings
     {
-        public static float CamSpeed = 10;
-        public static int WindowWidth = 1024;
-        public static int WindowHeight = 768;
+        public static int WindowWidth { get; } = 1024;
+        public static int WindowHeight { get; } = 768;
     }
 }

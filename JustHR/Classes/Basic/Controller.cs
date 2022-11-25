@@ -110,7 +110,7 @@ namespace ShaderPack.Classes
                     {
                         if (wasMouseButtonPressed[certainButton])
                         {
-                            //OnMouseButtonReleased(certainButton, mouseState.X, mouseState.Y);
+                            OnMouseButtonReleased(certainButton, mouseState.X, mouseState.Y);
                             wasMouseButtonPressed[certainButton] = false;
                         }
                     }
