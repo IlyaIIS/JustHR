@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShaderPack.Classes
+namespace JustHR.Classes.Basic.Animations
 {
     /// <summary>
     /// Класс, управляющий анимациями. Умеет переключайть анимации напрямую или через событие конца анимации. 
@@ -19,7 +19,7 @@ namespace ShaderPack.Classes
         /// <summary>Сюда навешивать методы, которые должны выполняться после конца анимации (событие триггерят только delault анимации).</summary>
         public event AnimationOverHandler OnAnimationOver;
 
-        public Animator(List<Animation> animations)
+        public Animator(List<Animation> animations, T animationName)
         {
             animationsWithNames = new Dictionary<T, Animation>();
             foreach (Animation animation in animations)
@@ -29,6 +29,9 @@ namespace ShaderPack.Classes
                 else
                     throw new ArithmeticException("Enum анимации должен быть тот же, что и enum аниматора.");
             }
+
+            AnimationName = animationName;
+            animation = animationsWithNames[animationName];
         }
 
         public void SetAnimation(T animationName)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ShaderPack.Classes
+namespace JustHR.Classes.Basic.Animations
 {
     /// <summary>
     /// Хранит кадры, их продолжительность в тиках и текущий тик (что позволяет узнать текущий кадр |_____|____|___|___v____|).

@@ -16,18 +16,4 @@ namespace JustHR.Classes
     {
         
     }
-
-    enum SceneObjectsEnum
-    {
-        BackChair,
-        Calendar,
-        ChristmasTree,
-        Clock,
-        Cooler,
-        CurriculumVitae,
-        Door,
-        SideChair,
-        Table,
-        Whiteboard
-    }
 }

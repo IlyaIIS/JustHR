@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShaderPack.Classes
+namespace JustHR.Classes.Basic
 {
     /// <summary>
     /// Класс для работы с tileset'ами. Разбивает текстуру-сет на тайлы и даёт возможность отрисовывать их.
     /// </summary>
-    class TileMap
+    class TileSetTileMap
     {
         public Texture2D Texture { get; private set; }
         public int Width { get; }
@@ -18,10 +18,9 @@ namespace ShaderPack.Classes
         public int TotalTileNum { get; }
         public Point TileSize { get; }
 
+        public delegate void DrawTile(Texture2D texuture, Rectangle sourceRectangle);
 
-        public delegate void DrawTile(Texture2D texture, Rectangle sourceRectange);
-
-        public TileMap(Texture2D texture, int horizontalTileNum, int verticalTileNum, int totalTileNum = -1)
+        public TileSetTileMap(Texture2D texture, int horizontalTileNum, int verticalTileNum, int totalTileNum = -1)
         {
             Texture = texture;
             Width = texture.Width;

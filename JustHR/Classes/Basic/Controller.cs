@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShaderPack.Classes
+namespace JustHR.Classes.Basic
 {
     /// <summary>
     /// Предоставляет интерфейс, активирующий события ввода и позволяющий задать действия на эти события. 

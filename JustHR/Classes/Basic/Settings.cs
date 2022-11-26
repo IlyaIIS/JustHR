@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ShaderPack.Classes
+namespace JustHR.Classes.Basic
 {
     /// <summary>
     /// Хранилище глобальных настроек игры.

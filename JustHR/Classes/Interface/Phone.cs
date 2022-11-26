@@ -1,5 +1,5 @@
-﻿using Microsoft.Xna.Framework;
-using ShaderPack.Classes;
+﻿using JustHR.Classes.Basic;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
