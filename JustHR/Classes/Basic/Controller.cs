@@ -174,6 +174,11 @@ namespace JustHR.Classes.Basic
             };
         }
 
+        public void ClearEvents()
+        {
+            OnMouseButtonReleased = null;
+        }
+
     }
     enum MouseButton
     {

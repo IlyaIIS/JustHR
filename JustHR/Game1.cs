@@ -53,9 +53,13 @@ namespace JustHR
             sceneObjects.Add(new SideChair());
             sceneObjects.Add(null);
             sceneObjects.Add(new Table());
+            sceneObjects.Add(new CurriculumVitae(controller));
 
             var buttons = new List<Button>();
-            buttons.Add(new Button(ButtonEnum.HeirForHR,new Vector2(50, 480), new Vector2(200, 70), controller, () => { currentScene = new OfficeScene(27, sceneObjects, controller); }));
+            buttons.Add(new Button(ButtonEnum.HeirForHR,new Vector2(50, 480), new Vector2(200, 70), controller, () => {
+                controller.ClearEvents();
+                currentScene = new OfficeScene(27, sceneObjects, controller); 
+            }));
             Phone phone = new Phone(buttons);
 
             Menu menu = new Menu(phone, null);
@@ -89,11 +93,12 @@ namespace JustHR
             sprites.Add(SceneObjectSpriteEnum.ChristmasTree, Content.Load<Texture2D>("Sprites/christmas_tree"));
             sprites.Add(SceneObjectSpriteEnum.Clock, Content.Load<Texture2D>("Sprites/calendar_clock"));
             sprites.Add(SceneObjectSpriteEnum.Cooler, Content.Load<Texture2D>("Sprites/cooler"));
-            sprites.Add(SceneObjectSpriteEnum.CurriculumVitae, Content.Load<Texture2D>("Sprites/small_cv"));
             sprites.Add(SceneObjectSpriteEnum.Door, Content.Load<Texture2D>("Sprites/door"));
             sprites.Add(SceneObjectSpriteEnum.SideChair, Content.Load<Texture2D>("Sprites/side_chair"));
             sprites.Add(SceneObjectSpriteEnum.Table, Content.Load<Texture2D>("Sprites/table"));
             sprites.Add(SceneObjectSpriteEnum.Whiteboard, Content.Load<Texture2D>("Sprites/whiteboard"));
+            sprites.Add(SceneObjectSpriteEnum.CurriculumVitae, Content.Load<Texture2D>("Sprites/table_cv"));
+            sprites.Add(SceneObjectSpriteEnum.ExpandedCurriculumVitae, Content.Load<Texture2D>("sprites/big_cv"));
 
             var tileSets = new Dictionary<Enum, SpriteListTileMap>();
             tileSets.Add(GarlandAnimationEnum.BlinkAnimation, new SpriteListTileMap(new List<Texture2D> {

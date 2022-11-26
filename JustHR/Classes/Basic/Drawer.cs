@@ -30,8 +30,9 @@ namespace JustHR.Classes.Basic
         {
 
             spriteBatch.Draw(sprites[scene.Background], new Vector2(0, 0), Color.White);
-            foreach(ISceneObject obj in scene.Objects)
+            for (int i = 0; i < scene.Objects.Count; i++)
             {
+                ISceneObject obj = scene.Objects[i];
                 if (obj != null)
                 {
                     Type type = obj.GetType();
@@ -57,7 +58,15 @@ namespace JustHR.Classes.Basic
                     }
                     else if (type == typeof(CurriculumVitae))
                     {
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.CurriculumVitae], new Vector2(0, 0), Color.White);
+                        CurriculumVitae cv = (CurriculumVitae)obj;
+                        if (cv.IsExpanded)
+                        {
+                            spriteBatch.Draw(sprites[SceneObjectSpriteEnum.ExpandedCurriculumVitae], new Vector2(0, 0), Color.White);
+                        }else
+                        {
+                            spriteBatch.Draw(sprites[SceneObjectSpriteEnum.CurriculumVitae], new Vector2(0, 0), Color.White);
+                        }
+                        
                     }
                     else if (type == typeof(Door))
                     {
@@ -157,6 +166,7 @@ namespace JustHR.Classes.Basic
         Clock,
         Cooler,
         CurriculumVitae,
+        ExpandedCurriculumVitae,
         Door,
         SideChair,
         Table,
