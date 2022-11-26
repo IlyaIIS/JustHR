@@ -6,5 +6,6 @@ namespace JustHR.Classes.SceneObjects
 {
     class Calendar : ISceneObject
     {
+
     }
 }

@@ -25,7 +25,7 @@ namespace JustHR.Classes.Interface
             };
         }
 
-        public void BeginSpech(List<string> speech)
+        public void BeginSpeech(List<string> speech)
         {
             this.speech = speech;
             tick = 0;

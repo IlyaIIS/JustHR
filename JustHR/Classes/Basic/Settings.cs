@@ -11,5 +11,7 @@ namespace JustHR.Classes.Basic
     {
         public static int WindowWidth { get; } = 1024;
         public static int WindowHeight { get; } = 768;
+        public static int FPS { get; } = 30;
+        public static int DayLengthInSec { get; } = 30;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using JustHR.Classes.Basic;
 using JustHR.Classes.Interface;
+using JustHR.Classes.SceneObjects;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -12,45 +13,58 @@ namespace JustHR.Classes
         public BackgroundsEnum Background { get; } = BackgroundsEnum.Office;
         public Menu Menu { get; }
         public List<ISceneObject> Objects { get; } = new List<ISceneObject>();
-        public OfficeScene(int day, List<ISceneObject> objects, Controller controller)
+        public int Day { get; }
+        public int Hour { get; private set; } = 9;
+        public OfficeScene(int day, Controller controller)
         {
-            Objects = objects;
+            Objects.Add(new Whiteboard());
+            Objects.Add(new Garland());
+            Objects.Add(new Door());
+            Objects.Add(new ChristmasTree());
+            Objects.Add(new Calendar());
+            Objects.Add(new Clock());
+            Objects.Add(new Cooler());
+            Objects.Add(new BackChair());
+            Objects.Add(new SideChair());
+            Objects.Add(null);
+            Objects.Add(new Table());
+            Objects.Add(new CurriculumVitae(this, controller));
+
+
+            Day = day;
             var buttons = new List<Button>();
             buttons.Add(new Button(ButtonEnum.TakeJob,new Vector2(50, 380), new Vector2(200, 70), controller, () => {
-                foreach(ISceneObject objct in Objects)
+                CurriculumVitae cv = GetCV();
+                Character character = GetCharacter();
+                if (character.IsSitting())
                 {
-                    if (objct.GetType() == typeof(Character))
-                    {
-                        Character character = (Character)objct;
-                        if (character.State == CharacterStateEnum.Coming && character.IsAnimationEnded())
-                            character.State = CharacterStateEnum.Accepted;
-                    }
+                    character.State = CharacterStateEnum.Accepted;
+                    if (cv.IsExpanded)
+                        cv.IsExpanded = false;
                 }
-                Menu.TextPlace.BeginSpech(new List<string> { "" });
+                Menu.TextPlace.BeginSpeech(new List<string> { "" });
             }));
             buttons.Add(new Button(ButtonEnum.Reject, new Vector2(50, 480), new Vector2(200, 70), controller,() => {
-                foreach (ISceneObject objct in Objects)
+                CurriculumVitae cv = GetCV();
+                Character character = GetCharacter();
+                if (character.IsSitting())
                 {
-                    if (objct.GetType() == typeof(Character))
-                    {
-                        Character character = (Character)objct;
-                        if (character.State == CharacterStateEnum.Coming && character.IsAnimationEnded())
-                            character.State = CharacterStateEnum.Rejected;
-                    }
+                    character.State = CharacterStateEnum.Rejected;
+                    if (cv.IsExpanded)
+                        cv.IsExpanded = false;
                 }
-                Menu.TextPlace.BeginSpech(new List<string> { "" });
+                Menu.TextPlace.BeginSpeech(new List<string> { "" });
             }));
             buttons.Add(new Button(ButtonEnum.CallBack, new Vector2(50, 580), new Vector2(200, 70), controller, () => {
-                foreach (ISceneObject objct in Objects)
+                CurriculumVitae cv = GetCV();
+                Character character = GetCharacter();
+                if (character.IsSitting())
                 {
-                    if (objct.GetType() == typeof(Character))
-                    {
-                        Character character = (Character)objct;
-                        if (character.State == CharacterStateEnum.Coming && character.IsAnimationEnded())
-                            character.State = CharacterStateEnum.Rejected;
-                    }
+                    character.State = CharacterStateEnum.Rejected;
+                    if (cv.IsExpanded)
+                        cv.IsExpanded = false;
                 }
-                Menu.TextPlace.BeginSpech(new List<string> { "" });
+                Menu.TextPlace.BeginSpeech(new List<string> { "" });
             }));
             Phone phone = new Phone(buttons);
 
@@ -67,6 +81,29 @@ namespace JustHR.Classes
                     Objects[i] = character;
                 }
             }
+
+            CurriculumVitae GetCV()
+            {
+                foreach (ISceneObject objct in Objects)
+                    if (objct.GetType() == typeof(CurriculumVitae))
+                        return (CurriculumVitae)objct;
+
+                throw new Exception("CV not found");
+            }
+        }
+
+        public void NextHour()
+        {
+            Hour++;
+        }
+
+        public Character GetCharacter()
+        {
+            foreach (ISceneObject objct in Objects)
+                if (objct.GetType() == typeof(Character))
+                    return (Character)objct;
+
+            throw new Exception("Character not found");
         }
 
         public void GenerateNewCharacter()

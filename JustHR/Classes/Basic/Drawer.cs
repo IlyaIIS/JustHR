@@ -43,6 +43,7 @@ namespace JustHR.Classes.Basic
                     else if (type == typeof(Calendar))
                     {
                         spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Calendar], new Vector2(0, 0), Color.White);
+                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], ((OfficeScene)scene).Day.ToString(), new Vector2(450, 220), Color.Black, 0, Vector2.Zero, 2f, SpriteEffects.None, 0);
                     }
                     else if (type == typeof(ChristmasTree))
                     {
@@ -50,7 +51,12 @@ namespace JustHR.Classes.Basic
                     }
                     else if (type == typeof(Clock))
                     {
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Clock], new Vector2(0, 0), Color.White);
+                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Clock], new Vector2(263, 26), Color.White);
+                        float rotation = MathF.PI + MathF.PI * 1.5f * ((((OfficeScene)scene).Hour - 9) / 9f);
+                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.ClockArrow], new Vector2(310, 80), null, Color.White, rotation, new Vector2(
+                                sprites[SceneObjectSpriteEnum.ClockArrow].Width/2, 
+                                sprites[SceneObjectSpriteEnum.ClockArrow].Height/2), 
+                                1, SpriteEffects.None, 0);
                     }
                     else if (type == typeof(Cooler))
                     {
@@ -64,7 +70,9 @@ namespace JustHR.Classes.Basic
                             spriteBatch.Draw(sprites[SceneObjectSpriteEnum.ExpandedCurriculumVitae], new Vector2(0, 0), Color.White);
                         }else
                         {
-                            spriteBatch.Draw(sprites[SceneObjectSpriteEnum.CurriculumVitae], new Vector2(0, 0), Color.White);
+                            Character character = ((OfficeScene)scene).GetCharacter();
+                            if (character.IsSitting())
+                                spriteBatch.Draw(sprites[SceneObjectSpriteEnum.CurriculumVitae], new Vector2(0, 0), Color.White);
                         }
                         
                     }
@@ -164,6 +172,7 @@ namespace JustHR.Classes.Basic
         Calendar,
         ChristmasTree,
         Clock,
+        ClockArrow,
         Cooler,
         CurriculumVitae,
         ExpandedCurriculumVitae,

@@ -33,6 +33,10 @@ namespace JustHR.Classes
             else
                 throw new NotImplementedException("Незаданный тип");
         }
+        public bool IsSitting()
+        {
+            return state == CharacterStateEnum.Coming && IsAnimationEnded();
+        }
 
         const int FIRST_LENGTH = 30;
         const int SECOND_LENGTH = 60;
@@ -87,7 +91,7 @@ namespace JustHR.Classes
                 }
                 else if (tick == FIRST_LENGTH + SECOND_LENGTH + THIRD_LENGTH + 1)
                 {
-                    TextPlace.BeginSpech(Speech);
+                    TextPlace.BeginSpeech(Speech);
                 }
             } else if (State == CharacterStateEnum.Rejected)
             {

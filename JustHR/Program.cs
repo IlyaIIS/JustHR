@@ -10,8 +10,6 @@ namespace JustHR
         {
 
 
-
-
             using (var game = new Game1())
             {
 /*                Form MyGameForm = (Form)Form.FromHandle(game.Window.Handle);

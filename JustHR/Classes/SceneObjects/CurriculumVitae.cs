@@ -9,26 +9,38 @@ namespace JustHR.Classes.SceneObjects
     {
         public bool IsExpanded { get; set; }
 
-        public CurriculumVitae(Controller controller)
+        public CurriculumVitae(OfficeScene scene, Controller controller)
         {
             controller.OnMouseButtonReleased += (key, x, y) =>
             {
-                if (key == MouseButton.LeftButton)
+                foreach (ISceneObject objct in scene.Objects)
                 {
-                    if (!IsExpanded)
+                    if (objct.GetType() == typeof(Character))
                     {
-                        if (x > 400 && y > 440 && x < 640 && y < 530)
+                        Character character = (Character)objct;
+                        if (character.IsSitting())
                         {
-                            IsExpanded = true;
-                        }
-                    } else
-                    {
-                        if (x < 200 || y < 40 || x > 850 || y > 540)
-                        {
-                            IsExpanded = false;
+                            if (key == MouseButton.LeftButton)
+                            {
+                                if (!IsExpanded)
+                                {
+                                    if (x > 400 && y > 440 && x < 640 && y < 530)
+                                    {
+                                        IsExpanded = true;
+                                    }
+                                }
+                                else
+                                {
+                                    if (x < 200 || y < 40 || x > 850 || y > 540)
+                                    {
+                                        IsExpanded = false;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+                
             };
         }
     }

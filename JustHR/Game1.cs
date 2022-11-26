@@ -19,6 +19,8 @@ namespace JustHR
         private Drawer drawer;
         private Controller controller;
         private IScene currentScene;
+        private long ticksSinceSceneStart;
+        private int day = 27;
 
         public Game1()
         {
@@ -32,7 +34,7 @@ namespace JustHR
             graphics.PreferredBackBufferHeight = Settings.WindowHeight;
 
             IsFixedTimeStep = true;
-            TargetElapsedTime = TimeSpan.FromSeconds(1d / 30d);
+            TargetElapsedTime = TimeSpan.FromSeconds(1d / Settings.FPS);
 
             Window.AllowUserResizing = false;
             Window.AllowAltF4 = false;
@@ -40,25 +42,11 @@ namespace JustHR
 
             //Window.IsBorderless = true;
 
-
-            var sceneObjects = new List<ISceneObject>();
-            sceneObjects.Add(new Whiteboard());
-            sceneObjects.Add(new Garland());
-            sceneObjects.Add(new Door());
-            sceneObjects.Add(new ChristmasTree());
-            sceneObjects.Add(new Calendar());
-            sceneObjects.Add(new Clock());
-            sceneObjects.Add(new Cooler());
-            sceneObjects.Add(new BackChair());
-            sceneObjects.Add(new SideChair());
-            sceneObjects.Add(null);
-            sceneObjects.Add(new Table());
-            sceneObjects.Add(new CurriculumVitae(controller));
-
             var buttons = new List<Button>();
             buttons.Add(new Button(ButtonEnum.HeirForHR,new Vector2(50, 480), new Vector2(200, 70), controller, () => {
                 controller.ClearEvents();
-                currentScene = new OfficeScene(27, sceneObjects, controller); 
+                currentScene = new OfficeScene(day, controller);
+                ticksSinceSceneStart = 0;
             }));
             Phone phone = new Phone(buttons);
 
@@ -89,9 +77,10 @@ namespace JustHR
             sprites.Add(SpriteEnum.NextPageArrow, Content.Load<Texture2D>("Sprites/next_page_arrow"));
 
             sprites.Add(SceneObjectSpriteEnum.BackChair, Content.Load<Texture2D>("Sprites/back_chair"));
-            sprites.Add(SceneObjectSpriteEnum.Calendar, Content.Load<Texture2D>("Sprites/calendar_clock"));
+            sprites.Add(SceneObjectSpriteEnum.Calendar, Content.Load<Texture2D>("Sprites/calendar"));
             sprites.Add(SceneObjectSpriteEnum.ChristmasTree, Content.Load<Texture2D>("Sprites/christmas_tree"));
-            sprites.Add(SceneObjectSpriteEnum.Clock, Content.Load<Texture2D>("Sprites/calendar_clock"));
+            sprites.Add(SceneObjectSpriteEnum.Clock, Content.Load<Texture2D>("Sprites/clock"));
+            sprites.Add(SceneObjectSpriteEnum.ClockArrow, Content.Load<Texture2D>("sprites/clock_arrow"));
             sprites.Add(SceneObjectSpriteEnum.Cooler, Content.Load<Texture2D>("Sprites/cooler"));
             sprites.Add(SceneObjectSpriteEnum.Door, Content.Load<Texture2D>("Sprites/door"));
             sprites.Add(SceneObjectSpriteEnum.SideChair, Content.Load<Texture2D>("Sprites/side_chair"));
@@ -115,6 +104,27 @@ namespace JustHR
                 Exit();
 
             controller.TriggerControlEvents();
+            ticksSinceSceneStart++;
+            if (currentScene.GetType() == typeof(OfficeScene))
+            {
+                if (ticksSinceSceneStart % (30) == 0)
+                    ((OfficeScene)currentScene).NextHour();
+                if (((OfficeScene)currentScene).Hour == 18)
+                {
+                    controller.ClearEvents();
+                    var buttons = new List<Button>();
+                    buttons.Add(new Button(ButtonEnum.GoToWork, new Vector2(50, 480), new Vector2(200, 70), controller, () => {
+                        controller.ClearEvents();
+                        day++;
+                        currentScene = new OfficeScene(day, controller);
+                        ticksSinceSceneStart = 0;
+                    }));
+                    Phone phone = new Phone(buttons);
+
+                    Menu menu = new Menu(phone, null);
+                    currentScene = new StreetScene(menu);
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -123,7 +133,7 @@ namespace JustHR
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
             drawer.DrawScene(currentScene);
             drawer.DrawMenu(currentScene.Menu);
 

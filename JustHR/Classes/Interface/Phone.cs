@@ -44,6 +44,7 @@ namespace JustHR.Classes.Interface
     enum ButtonEnum
     {
         HeirForHR,
+        GoToWork,
         TakeJob,
         Reject,
         CallBack,

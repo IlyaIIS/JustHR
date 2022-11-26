@@ -68,7 +68,7 @@ namespace JustHR.Classes.Basic
                     {
                         if (wasKeyPressed[key])
                         {
-                            OnKeyPressing(key);
+                            //OnKeyPressing(key);
                         }
                         else
                         {
@@ -119,9 +119,9 @@ namespace JustHR.Classes.Basic
             void TriggerMouseScrollEvents()
             {
                 if (mouseState.ScrollWheelValue > preMouseScroll)
-                    OnMouseScroll(1);
+                    //OnMouseScroll(1);
                 if (mouseState.ScrollWheelValue < preMouseScroll)
-                    OnMouseScroll(-1);
+                    //OnMouseScroll(-1);
                 preMouseScroll = mouseState.ScrollWheelValue;
             }
         }
