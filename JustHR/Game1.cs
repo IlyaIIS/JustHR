@@ -120,7 +120,7 @@ namespace JustHR
             {
                 entry.Value.Volume = Settings.EffectsVolume;
                 if ((SoundsEnum)entry.Key == SoundsEnum.song_the_blizzard_is_ringing)
-                    entry.Value.Volume = 0.05f;
+                    entry.Value.Volume = 0.7f;
             }
 
             //load fonts

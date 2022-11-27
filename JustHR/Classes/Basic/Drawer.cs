@@ -44,14 +44,14 @@ namespace JustHR.Classes.Basic
             if(scene.Background == BackgroundsEnum.Office)
             {
 
-                if(soundEffects[currentSong].State == SoundState.Stopped)
+                if(soundEffects[currentSong].State == SoundState.Stopped && Settings.Mentality >= 25)
                 {
                     soundEffects[SoundsEnum.sound_ambient].Stop();
                     if (currentSong == SoundsEnum.song_last_christmas_cover)
                         currentSong = SoundsEnum.song_the_blizzard_is_ringing;
                     else if (currentSong == SoundsEnum.song_the_blizzard_is_ringing)
                         currentSong = SoundsEnum.song_last_christmas_cover;
-                    else
+                    else 
                     {
                         //
                     }
@@ -306,9 +306,9 @@ namespace JustHR.Classes.Basic
                 }
 
                 string text1;
-/*                if (Settings.Mentality < 25)
+                if (Settings.Mentality < 25)
                     text1 = builder.ToString().ToUpper();
-                else*/
+                else
                     text1 = builder.ToString();
 
                 spriteBatch.DrawString(fonts[FontsEnum.Pixel], text1, new Vector2(320, 560), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.333f);

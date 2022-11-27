@@ -26,7 +26,7 @@ namespace JustHR.Classes.Basic
         public static int Mentality { get; set; }
         public static int BossSatisfaction { get; set; }
 
-        public static float GlobalVolume { get; } = 0.07f;
+        public static float GlobalVolume { get; } = 0.7f;
         public static float EffectsVolume { get; } = 1f;
     }
 }
