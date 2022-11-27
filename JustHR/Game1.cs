@@ -8,11 +8,16 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace JustHR
 {
     public class Game1 : Game
     {
+        Effect waveShader;
+        RenderTarget2D canvas;
+
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private SpriteFont mainFont;
@@ -20,7 +25,8 @@ namespace JustHR
         private Controller controller;
         private IScene currentScene;
         private long ticksSinceSceneStart;
-        private int day = 27;
+        private int day;
+        private Dictionary<Enum, SoundEffectInstance> soundEffects = new Dictionary<Enum, SoundEffectInstance>();
 
         public Game1()
         {
@@ -40,19 +46,31 @@ namespace JustHR
             Window.AllowAltF4 = false;
             Window.Title = "JustHR";
 
-            //Window.IsBorderless = true;
+            StartNewGame();
+        }
+
+        private void StartNewGame()
+        {
+            day = 27;
+
+            Settings.Professionality = 60;
+            Settings.Unity = 60;
+            Settings.Mentality = 60;
+            Settings.BossSatisfaction = 60;
 
             var buttons = new List<Button>();
-            buttons.Add(new Button(ButtonEnum.HeirForHR,new Vector2(50, 480), new Vector2(200, 70), controller, () => {
+            buttons.Add(new Button(ButtonEnum.StartButton, new Vector2(50, 450), new Vector2(220, 210), controller, () => {
+                soundEffects[SoundsEnum.phone_btn_sound_2].Play();
+
                 controller.ClearEvents();
-                currentScene = new OfficeScene(day, controller);
+                currentScene = new OfficeScene(day, controller, soundEffects);
                 ticksSinceSceneStart = 0;
             }));
             Phone phone = new Phone(buttons);
 
             Menu menu = new Menu(phone, null);
 
-            currentScene = new StreetScene(menu);
+            currentScene = new StreetScene(menu, soundEffects);
         }
 
         protected override void Initialize()
@@ -65,16 +83,72 @@ namespace JustHR
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            canvas = new RenderTarget2D(GraphicsDevice, Settings.WindowWidth, Settings.WindowHeight);
+
+            //load sounds
+            SoundEffect.MasterVolume = Settings.GlobalVolume; //volume
+            soundEffects.Add(SoundsEnum.door_closing, Content.Load<SoundEffect>("sounds/door_closing").CreateInstance());
+            soundEffects.Add(SoundsEnum.door_opening, Content.Load<SoundEffect>("sounds/door_opening").CreateInstance());
+            soundEffects.Add(SoundsEnum.drink_coffee, Content.Load<SoundEffect>("sounds/drink_coffee").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_long, Content.Load<SoundEffect>("sounds/mur_long").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_long_with_a_pet_cat, Content.Load<SoundEffect>("sounds/mur_long_with_a_pet_cat").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_short, Content.Load<SoundEffect>("sounds/mur_short").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_super_short, Content.Load<SoundEffect>("sounds/mur_super_short").CreateInstance());
+            soundEffects.Add(SoundsEnum.phone_btn_sound_1, Content.Load<SoundEffect>("sounds/phone_btn_sound_1").CreateInstance());
+            soundEffects.Add(SoundsEnum.phone_btn_sound_2, Content.Load<SoundEffect>("sounds/phone_btn_sound_2").CreateInstance());
+            soundEffects.Add(SoundsEnum.phone_btn_sound_3, Content.Load<SoundEffect>("sounds/phone_btn_sound_3").CreateInstance());
+            soundEffects.Add(SoundsEnum.song_carol_of_the_bells, Content.Load<SoundEffect>("sounds/song_carol_of_the_bells").CreateInstance());
+            soundEffects.Add(SoundsEnum.song_last_christmas_cover, Content.Load<SoundEffect>("sounds/song_last_christmas_cover").CreateInstance());
+            soundEffects.Add(SoundsEnum.song_the_blizzard_is_ringing, Content.Load<SoundEffect>("sounds/song_the_blizzard_is_ringing").CreateInstance());
+            soundEffects.Add(SoundsEnum.sound_ambient, Content.Load<SoundEffect>("sounds/sound_ambient").CreateInstance());
+            soundEffects.Add(SoundsEnum.vc_closing, Content.Load<SoundEffect>("sounds/vc_closing").CreateInstance());
+            soundEffects.Add(SoundsEnum.vc_opening, Content.Load<SoundEffect>("sounds/vc_opening").CreateInstance());
+            soundEffects.Add(SoundsEnum.voice_long, Content.Load<SoundEffect>("sounds/voice_long").CreateInstance());
+            soundEffects.Add(SoundsEnum.voice_long_raised_tone, Content.Load<SoundEffect>("sounds/voice_long_raised_tone").CreateInstance());
+            soundEffects.Add(SoundsEnum.voice_short, Content.Load<SoundEffect>("sounds/voice_short").CreateInstance());
+            soundEffects.Add(SoundsEnum.cat_hisses, Content.Load<SoundEffect>("sounds/cat_hisses").CreateInstance());
+            soundEffects.Add(SoundsEnum.six_steps, Content.Load<SoundEffect>("sounds/six_steps").CreateInstance());
+            soundEffects.Add(SoundsEnum.step_1, Content.Load<SoundEffect>("sounds/step_1").CreateInstance());
+            soundEffects.Add(SoundsEnum.step_2, Content.Load<SoundEffect>("sounds/step_2").CreateInstance());
+            soundEffects.Add(SoundsEnum.tap_a_clock, Content.Load<SoundEffect>("sounds/tap_a_clock").CreateInstance());
+            soundEffects.Add(SoundsEnum.tick_1, Content.Load<SoundEffect>("sounds/tick_1").CreateInstance());
+            soundEffects.Add(SoundsEnum.tick_2, Content.Load<SoundEffect>("sounds/tick_2").CreateInstance());
+            soundEffects.Add(SoundsEnum.transition_sound, Content.Load<SoundEffect>("sounds/transition_sound").CreateInstance());
+            soundEffects.Add(SoundsEnum.rage, Content.Load<SoundEffect>("sounds/Rage").CreateInstance());
+
+            foreach (KeyValuePair<Enum, SoundEffectInstance> entry in soundEffects)
+            {
+                entry.Value.Volume = Settings.EffectsVolume;
+                if ((SoundsEnum)entry.Key == SoundsEnum.song_the_blizzard_is_ringing)
+                    entry.Value.Volume = 0.05f;
+            }
+
+            //load fonts
             var fonts = new Dictionary<Enum, SpriteFont>();
             fonts.Add(FontsEnum.Main, Content.Load<SpriteFont>("main_font"));
             fonts.Add(FontsEnum.Pixel, Content.Load<SpriteFont>("pixel_font"));
 
+            waveShader = Content.Load<Effect>("WaveShader");
+
+            //load sprites
             var sprites = new Dictionary<Enum, Texture2D>();
             sprites.Add(BackgroundsEnum.Street, Content.Load<Texture2D>("Sprites/street"));
             sprites.Add(BackgroundsEnum.Office, Content.Load<Texture2D>("Sprites/office_background"));
             sprites.Add(SpriteEnum.Phone, Content.Load<Texture2D>("Sprites/phone"));
+
+            sprites.Add(ButtonEnum.AcceptButton, Content.Load<Texture2D>("Sprites/accept_button"));
+            sprites.Add(ButtonEnum.JobResponsibilitiesButton, Content.Load<Texture2D>("Sprites/job_jesponsibilities_button"));
+            sprites.Add(ButtonEnum.RecallButton, Content.Load<Texture2D>("Sprites/recall_button"));
+            sprites.Add(ButtonEnum.RejectButton, Content.Load<Texture2D>("Sprites/rejected_button"));
+            sprites.Add(ButtonEnum.StartButton, Content.Load<Texture2D>("Sprites/start_button"));
+            sprites.Add(ButtonEnum.StartDayButton, Content.Load<Texture2D>("Sprites/start_day"));
+
+
             sprites.Add(SpriteEnum.TextPlace, Content.Load<Texture2D>("Sprites/text_place"));
             sprites.Add(SpriteEnum.NextPageArrow, Content.Load<Texture2D>("Sprites/next_page_arrow"));
+            sprites.Add(SpriteEnum.Pixel, Content.Load<Texture2D>("Sprites/pixel"));
+            sprites.Add(SpriteEnum.Character, Content.Load<Texture2D>("Sprites/Characters/dude"));
+            sprites.Add(SpriteEnum.SittingCharacter, Content.Load<Texture2D>("Sprites/Characters/sitting_dude"));
 
             sprites.Add(SceneObjectSpriteEnum.BackChair, Content.Load<Texture2D>("Sprites/back_chair"));
             sprites.Add(SceneObjectSpriteEnum.Calendar, Content.Load<Texture2D>("Sprites/calendar"));
@@ -83,19 +157,63 @@ namespace JustHR
             sprites.Add(SceneObjectSpriteEnum.ClockArrow, Content.Load<Texture2D>("sprites/clock_arrow"));
             sprites.Add(SceneObjectSpriteEnum.Cooler, Content.Load<Texture2D>("Sprites/cooler"));
             sprites.Add(SceneObjectSpriteEnum.Door, Content.Load<Texture2D>("Sprites/door"));
+            sprites.Add(SceneObjectSpriteEnum.OpenedDoor, Content.Load<Texture2D>("Sprites/opened_door"));
             sprites.Add(SceneObjectSpriteEnum.SideChair, Content.Load<Texture2D>("Sprites/side_chair"));
-            sprites.Add(SceneObjectSpriteEnum.Table, Content.Load<Texture2D>("Sprites/table"));
+            sprites.Add(SceneObjectSpriteEnum.Table, Content.Load<Texture2D>("Sprites/desk"));
             sprites.Add(SceneObjectSpriteEnum.Whiteboard, Content.Load<Texture2D>("Sprites/whiteboard"));
             sprites.Add(SceneObjectSpriteEnum.CurriculumVitae, Content.Load<Texture2D>("Sprites/table_cv"));
             sprites.Add(SceneObjectSpriteEnum.ExpandedCurriculumVitae, Content.Load<Texture2D>("sprites/big_cv"));
+            sprites.Add(CatState.Phone, Content.Load<Texture2D>("sprites/cat_sits"));
+            sprites.Add(CatState.Cooler, Content.Load<Texture2D>("sprites/cooler_cat"));
+            sprites.Add(CatState.Chair, Content.Load<Texture2D>("sprites/nasty_cat"));
+            sprites.Add(CatState.AngryPhone, Content.Load<Texture2D>("sprites/angry_cat"));
+            sprites.Add(CatState.AngryCooler, Content.Load<Texture2D>("sprites/angry_cooler_cat"));
+            sprites.Add(CatState.AngryChair, Content.Load<Texture2D>("sprites/angry_chair_cat"));
 
             var tileSets = new Dictionary<Enum, SpriteListTileMap>();
             tileSets.Add(GarlandAnimationEnum.BlinkAnimation, new SpriteListTileMap(new List<Texture2D> {
                 Content.Load<Texture2D>("Sprites/lights1"),
                 Content.Load<Texture2D>("Sprites/lights2")
             }));
+            tileSets.Add(TreeAnimationEnum.Blink, new SpriteListTileMap(new List<Texture2D> {
+                Content.Load<Texture2D>("Sprites/tree1"),
+                Content.Load<Texture2D>("Sprites/tree2")
+            }));
+            tileSets.Add(ClothesEnum.Clothes, new SpriteListTileMap(new List<Texture2D> {
+                Content.Load<Texture2D>("Sprites/Characters/scl1"),
+                Content.Load<Texture2D>("Sprites/Characters/scl2"),
+                Content.Load<Texture2D>("Sprites/Characters/scl3"),
+                Content.Load<Texture2D>("Sprites/Characters/scl4"),
+                Content.Load<Texture2D>("Sprites/Characters/scl5"),
+                Content.Load<Texture2D>("Sprites/Characters/scl6"),
+            }));
+            tileSets.Add(ClothesEnum.SittingClothes, new SpriteListTileMap(new List<Texture2D> {
+                Content.Load<Texture2D>("Sprites/Characters/cl1"),
+                Content.Load<Texture2D>("Sprites/Characters/cl2"),
+                Content.Load<Texture2D>("Sprites/Characters/cl3"),
+                Content.Load<Texture2D>("Sprites/Characters/cl4"),
+                Content.Load<Texture2D>("Sprites/Characters/cl5"),
+                Content.Load<Texture2D>("Sprites/Characters/cl6"),
+            }));
+            tileSets.Add(ClothesEnum.Hairs, new SpriteListTileMap(new List<Texture2D> {
+                Content.Load<Texture2D>("Sprites/Characters/h1"),
+                Content.Load<Texture2D>("Sprites/Characters/h2"),
+                Content.Load<Texture2D>("Sprites/Characters/h3"),
+                Content.Load<Texture2D>("Sprites/Characters/h4"),
+            }));
+            tileSets.Add(ClothesEnum.Eyes, new SpriteListTileMap(new List<Texture2D> {
+                Content.Load<Texture2D>("Sprites/Characters/a1"),
+                Content.Load<Texture2D>("Sprites/Characters/a2"),
+                Content.Load<Texture2D>("Sprites/Characters/a3"),
+                Content.Load<Texture2D>("Sprites/Characters/a4"),
+                Content.Load<Texture2D>("Sprites/Characters/a5"),
+            }));
+            tileSets.Add(ClothesEnum.Accessories, new SpriteListTileMap(new List<Texture2D> {
+                Content.Load<Texture2D>("Sprites/Characters/fa1"),
+                Content.Load<Texture2D>("Sprites/Characters/fa2"),
+            }));
 
-            drawer = new Drawer(spriteBatch, sprites, tileSets, fonts);
+            drawer = new Drawer(spriteBatch, sprites, tileSets, null, fonts, soundEffects);
         }
 
         protected override void Update(GameTime gameTime)
@@ -104,26 +222,65 @@ namespace JustHR
                 Exit();
 
             controller.TriggerControlEvents();
+
             ticksSinceSceneStart++;
-            if (currentScene.GetType() == typeof(OfficeScene))
+            if (currentScene is OfficeScene)
             {
-                if (ticksSinceSceneStart % (30) == 0)
-                    ((OfficeScene)currentScene).NextHour();
-                if (((OfficeScene)currentScene).Hour == 18)
+                OfficeScene ofScene = (OfficeScene)currentScene;
+
+                if (ofScene.IsGameOver)
+                {
+                    StartNewGame();
+                }
+
+                if (ticksSinceSceneStart % (Settings.FPS * Settings.DayLengthInSec) == 0) //тик часа
+                    if (!ofScene.GetObject<Character>().IsBoss)
+                        ofScene.NextHour();
+                if (ofScene.Hour == 18) //конец дня
+                    ofScene.EndDay();
+
+                if (ofScene.IsDayEnded)
                 {
                     controller.ClearEvents();
                     var buttons = new List<Button>();
-                    buttons.Add(new Button(ButtonEnum.GoToWork, new Vector2(50, 480), new Vector2(200, 70), controller, () => {
+                    buttons.Add(new Button(ButtonEnum.StartDayButton, new Vector2(50, 450), new Vector2(220, 200), controller, () => {
                         controller.ClearEvents();
                         day++;
-                        currentScene = new OfficeScene(day, controller);
+
+                        currentScene = new OfficeScene(day, controller, soundEffects);
                         ticksSinceSceneStart = 0;
                     }));
                     Phone phone = new Phone(buttons);
 
+                    Settings.Mentality = Math.Max(60, Settings.Mentality);
+
                     Menu menu = new Menu(phone, null);
-                    currentScene = new StreetScene(menu);
+
+                    currentScene = new StreetScene(menu, soundEffects);
+
+                    if (soundEffects[SoundsEnum.rage].State == SoundState.Playing)
+                    {
+                        soundEffects[SoundsEnum.rage].Stop();
+                        soundEffects[SoundsEnum.sound_ambient].Play();
+                    }
                 }
+
+                if (Settings.Mentality < 25 && soundEffects[SoundsEnum.rage].State == SoundState.Stopped)
+                {
+                    soundEffects[SoundsEnum.song_carol_of_the_bells].Stop();
+                    soundEffects[SoundsEnum.song_last_christmas_cover].Stop();
+                    soundEffects[SoundsEnum.song_the_blizzard_is_ringing].Stop();
+                    soundEffects[SoundsEnum.sound_ambient].Stop();
+                    soundEffects[SoundsEnum.rage].Play();
+                }
+                if (Settings.Mentality > 25 && soundEffects[SoundsEnum.rage].State == SoundState.Playing)
+                {
+                    soundEffects[SoundsEnum.rage].Stop();
+                }
+            }
+            else
+            {
+                (currentScene as StreetScene).DoTick();
             }
 
             base.Update(gameTime);
@@ -131,11 +288,37 @@ namespace JustHR
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            
 
-            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+            waveShader.Parameters["ElapsedTime"].SetValue((float)gameTime.TotalGameTime.TotalSeconds*1.5f);
+            float elapsedWeight = 0;
+            if (currentScene is OfficeScene)
+            {
+                elapsedWeight = 1 - MathHelper.Clamp(Settings.Mentality / 100f, 0, 0.25f)/0.25f;
+            }
+
+            waveShader.Parameters["ElapsedWeight"].SetValue(elapsedWeight);
+            GraphicsDevice.SetRenderTarget(canvas);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+
             drawer.DrawScene(currentScene);
-            drawer.DrawMenu(currentScene.Menu);
+
+            spriteBatch.End();
+
+
+            GraphicsDevice.SetRenderTarget(null);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin(effect: waveShader, samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+
+            spriteBatch.Draw(canvas, new Vector2(0, 0), Color.White);
+
+            spriteBatch.End();
+
+
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+
+            drawer.DrawMenu(currentScene.Menu, currentScene);
 
             spriteBatch.End();
 

@@ -1,4 +1,5 @@
 ﻿using JustHR.Classes.Basic;
+using Microsoft.Xna.Framework.Audio;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,10 +38,13 @@ namespace JustHR.Classes.Interface
             return speech[page].Substring(0, tick);
         }
 
-        public void DoTick()
+        public void DoTick(Dictionary<Enum, SoundEffectInstance> soundEffects)
         {
             if (tick < speech[page].Length)
+            {
+                soundEffects[SoundsEnum.voice_short].Play();
                 tick++;
+            }
         }
     }
 }

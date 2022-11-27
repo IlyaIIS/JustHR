@@ -1,9 +1,12 @@
 ﻿using JustHR.Classes.Interface;
+using JustHR.Classes.SceneObjects;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework.Audio;
+using JustHR.Classes.Basic;
 
 namespace JustHR.Classes
 {
@@ -12,15 +15,42 @@ namespace JustHR.Classes
         private Vector2 originPos;
         public Vector2 Pos { get; private set; }
         public float scale { get; private set; }
-        public HairEnum Hairs { get; }
-        public AccessoryEnum Accessory { get; }
-        public ClothesEnum Clothes { get; }
-        public List<string> Speech { get; }
+
+        public int ClothNum { get; }
+
         public TextPlace TextPlace { get; }
         private CharacterStateEnum state;
         public CharacterStateEnum State { get { return state; } set { state = value; tick = 0; } }
         private int tick;
         private OfficeScene scene;
+
+        public bool IsBoss { get; }
+
+        public string FirstName { get; }
+        public string SecondName { get; }
+        public string Patronumic { get; }
+
+        public string Birthday { get; }
+
+        public int Eyes { get; }
+        public int Hairs { get; }
+        public int Accessory { get; }
+
+        public ProfessionEnum Profession { get; }
+        public GradeEnum Grade { get; }
+
+        public int Professionality { get; }
+        public int SocialIntelligence { get; }
+
+        public int HairMoraleImpact { get; }
+        public int RejectMaraleImpact { get; }
+
+        public int RequiredSalary { get; }
+
+        public List<string> Speech { get; }
+
+        public Dictionary<Enum, SoundEffectInstance> SoundEffects { get; }
+
 
         public bool IsAnimationEnded()
         {
@@ -45,19 +75,37 @@ namespace JustHR.Classes
         const int REJECTED_LENGTH = 70;
         const int ACCEPTED_LENGTH = 70;
 
-        public Character(Vector2 pos, TextPlace textPlace, HairEnum hairs, AccessoryEnum accessory, ClothesEnum clothes, OfficeScene scene, List<string> speech = null)
+        public Character(Vector2 pos, TextPlace textPlace, OfficeScene scene, int clothNum, CharacterTraits traits,
+            Dictionary<Enum, SoundEffectInstance> soundEffects)
         {
             Pos = pos;
             originPos = pos;
             TextPlace = textPlace;
-            Hairs = hairs;
-            Accessory = accessory;
-            Clothes = clothes;
+            ClothNum = clothNum;
+
+            IsBoss = traits.IsBoss;
+            FirstName = traits.FirstName;
+            SecondName = traits.SecondName;
+            Patronumic = traits.Patronumic;
+            Birthday = traits.Birthday;
+            Eyes = traits.Eyes;
+            Hairs = traits.Hairs;
+            Accessory = traits.Accessory;
+            Profession = traits.Profession;
+            Grade = traits.Grade;
+            Professionality = traits.Professionality;
+            SocialIntelligence = traits.SocialIntelligence;
+            HairMoraleImpact = traits.HairMoraleImpact;
+            RejectMaraleImpact = traits.RejectMaraleImpact;
+            RequiredSalary = traits.RequiredSalary;
+            Speech = traits.Speech;
+            SoundEffects = soundEffects;
+
             this.scene = scene; 
-            foreach(string str in speech)
+            foreach(string str in Speech)
                 if (str.Length > 300)
                     throw new ArgumentException("Слишком длинная реплика");
-            Speech = speech;
+            Speech = Speech;
         }
         //волосы, ?уши, аксесуар, одежда
         public void DoTick()
@@ -74,6 +122,10 @@ namespace JustHR.Classes
                 else if (tick == FIRST_LENGTH)
                 {
                     originPos = Pos;
+                    Door door = scene.GetObject<Door>();
+                    door.State = DoorState.Closed;
+
+                    SoundEffects[SoundsEnum.door_closing].Play();
                 }
                 else if (tick < FIRST_LENGTH + SECOND_LENGTH)
                 {
@@ -91,44 +143,132 @@ namespace JustHR.Classes
                 }
                 else if (tick == FIRST_LENGTH + SECOND_LENGTH + THIRD_LENGTH + 1)
                 {
+                    originPos = Pos;
                     TextPlace.BeginSpeech(Speech);
                 }
             } else if (State == CharacterStateEnum.Rejected)
             {
-                if(tick  <= REJECTED_LENGTH)
+                if(tick < THIRD_LENGTH)
                 {
-                    Pos = new Vector2(originPos.X - ((float)tick / REJECTED_LENGTH) * 650, originPos.Y + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)tick / REJECTED_LENGTH) * 4)));
+                    Pos = new Vector2(originPos.X, originPos.Y - ((float)tick / THIRD_LENGTH) * 30);
+                }
+                else if (tick == THIRD_LENGTH)
+                {
+                    originPos = Pos;
+                }
+                else if(tick  <= REJECTED_LENGTH + THIRD_LENGTH)
+                {
+                    int curTick = tick - THIRD_LENGTH;
+                    Pos = new Vector2(originPos.X - ((float)curTick / REJECTED_LENGTH) * 650, originPos.Y + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)curTick / REJECTED_LENGTH) * 4)));
                 }
                 else
                 {
-                    scene.GenerateNewCharacter();
+                    scene.CharacterExited();
                 }
-            }else if (State == CharacterStateEnum.Accepted)
+            }else if (State == CharacterStateEnum.Accepted) //Босс всегда уходит сюда
             {
-                if(tick <= ACCEPTED_LENGTH)
+                if (tick < THIRD_LENGTH)
                 {
-                    Pos = new Vector2(originPos.X + ((float)tick / ACCEPTED_LENGTH) * 650, originPos.Y + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)tick / ACCEPTED_LENGTH) * 6)));
+                    Pos = new Vector2(originPos.X, originPos.Y - ((float)tick / THIRD_LENGTH) * 30);
+                }
+                else if (tick == THIRD_LENGTH)
+                {
+                    originPos = Pos;
+                }
+                else if (tick <= ACCEPTED_LENGTH + THIRD_LENGTH)
+                {
+                    int curTick = (tick - THIRD_LENGTH);
+                    Pos = new Vector2(originPos.X + ((float)curTick / (ACCEPTED_LENGTH + THIRD_LENGTH)) * 750, originPos.Y + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)curTick / (ACCEPTED_LENGTH + THIRD_LENGTH)) * 6)));
                 } else
                 {
-                    scene.GenerateNewCharacter();
+                    if (IsBoss)
+                        if (scene.Hour >= 18)
+                        {
+                            scene.Exit();
+                        }
+
+                    scene.CharacterExited();
                 }
             }
         }
     }
 
-    enum HairEnum
+    struct CharacterTraits
     {
-        Type1,
+        public bool IsBoss { get; }
+        public string FirstName { get; }
+        public string SecondName { get; }
+        public string Patronumic { get; }
+
+        public string Birthday { get; }
+
+        public int Eyes { get; }
+        public int Hairs { get; }
+        public int Accessory { get; }
+
+        public ProfessionEnum Profession { get; }
+        public GradeEnum Grade { get; }
+
+        public int Professionality { get; }
+        public int SocialIntelligence { get; }
+
+        public int HairMoraleImpact { get; }
+        public int RejectMaraleImpact { get; }
+
+        public int RequiredSalary { get; }
+
+        public List<string> Speech { get; }
+
+        public CharacterTraits(bool isBoss, string firstName, string secondName, string patronumic, string birthday,
+            int eyes, int hairs, int accessory,
+            ProfessionEnum profession, GradeEnum grade, int professionality,
+            int socialIntelligence, int hairMoraleImpact, int rejectMaraleImpact, int requiredSalary,
+            List<string> speech)
+        {
+            IsBoss = isBoss;
+            FirstName = firstName;
+            SecondName = secondName;
+            Patronumic = patronumic;
+            Birthday = birthday;
+            Eyes = eyes;
+            Hairs = hairs;
+            Accessory = accessory;
+            Profession = profession;
+            Grade = grade;
+            Professionality = professionality;
+            SocialIntelligence = socialIntelligence;
+            HairMoraleImpact = hairMoraleImpact;
+            RejectMaraleImpact = rejectMaraleImpact;
+            RequiredSalary = requiredSalary;
+            Speech = speech;
+        }
     }
 
-    enum AccessoryEnum
+    enum GradeEnum
     {
-        Type1,
+        Junior,
+        Middle,
+        Senior
+    }
+    enum ProfessionEnum
+    {
+        Developer,
+        Designer,
+        Analyst,
+        Manager,
+        Marketer,
+        Accountant,
+        Sysadmin,
+        Cleaner,
     }
 
     enum ClothesEnum
     {
-        Type1,
+        Clothes,
+        SittingClothes,
+        Hairs,
+        Eyes,
+        Accessories,
     }
 
     enum CharacterStateEnum

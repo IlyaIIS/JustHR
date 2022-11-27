@@ -8,7 +8,8 @@ namespace JustHR.Classes.Interface
 {
     class Phone
     {
-        List<Button> Buttons { get; }
+        public List<Button> Buttons { get; }
+
 
         public Phone(List<Button> buttons)
         {
@@ -22,18 +23,22 @@ namespace JustHR.Classes.Interface
         public ButtonEnum Name { get; }
         public Vector2 Pos { get; } 
         public Vector2 Size { get; }
+        //public Dictionary<Enum, SoundEffect> SoundEffects;
 
         public Button(ButtonEnum name, Vector2 pos, Vector2 size, Controller controller, Action action)
         {
+            Name = name;
             Action = action;
             Pos = pos;
             Size = size;
+            //SoundEffects = soundEffects;
 
             controller.OnMouseButtonReleased += (button, x, y) => { 
                 if (button == MouseButton.LeftButton)
                 {
                     if (x > Pos.X && y > Pos.Y && x < Pos.X + Size.X && y < Pos.Y + Size.Y)
                     {
+                        
                         Action.Invoke();
                     }
                 }
@@ -43,10 +48,11 @@ namespace JustHR.Classes.Interface
 
     enum ButtonEnum
     {
-        HeirForHR,
-        GoToWork,
-        TakeJob,
-        Reject,
-        CallBack,
+        AcceptButton,
+        JobResponsibilitiesButton,
+        RecallButton,
+        RejectButton,
+        StartButton,
+        StartDayButton,
     }
 }
