@@ -16,15 +16,10 @@ namespace JustHR.Classes.Basic
 
         public static Dictionary<GradeEnum, int> AvarajeSalary = new Dictionary<GradeEnum, int>
         {
-            { GradeEnum.Junior, 50}, //+-30
-            { GradeEnum.Middle, 120}, //+-40
-            { GradeEnum.Senior, 330} //+-110 
+            { GradeEnum.Junior, 50},
+            { GradeEnum.Middle, 120}, 
+            { GradeEnum.Senior, 330} 
         };
-
-        public static int Professionality { get; set; }
-        public static int Unity { get; set; }
-        public static int Mentality { get; set; }
-        public static int BossSatisfaction { get; set; }
 
         public static float GlobalVolume { get; } = 0.7f;
         public static float EffectsVolume { get; } = 1f;

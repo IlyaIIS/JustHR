@@ -14,7 +14,7 @@ namespace JustHR.Classes
     {
         private Vector2 originPos;
         public Vector2 Pos { get; private set; }
-        public float scale { get; private set; }
+        public float Scale { get; private set; }
 
         public int ClothNum { get; }
 
@@ -22,32 +22,9 @@ namespace JustHR.Classes
         private CharacterStateEnum state;
         public CharacterStateEnum State { get { return state; } set { state = value; tick = 0; } }
         private int tick;
-        private OfficeScene scene;
+        private readonly OfficeScene scene;
 
-        public bool IsBoss { get; }
-
-        public string FirstName { get; }
-        public string SecondName { get; }
-        public string Patronumic { get; }
-
-        public string Birthday { get; }
-
-        public int Eyes { get; }
-        public int Hairs { get; }
-        public int Accessory { get; }
-
-        public ProfessionEnum Profession { get; }
-        public GradeEnum Grade { get; }
-
-        public int Professionality { get; }
-        public int SocialIntelligence { get; }
-
-        public int HairMoraleImpact { get; }
-        public int RejectMaraleImpact { get; }
-
-        public int RequiredSalary { get; }
-
-        public List<string> Speech { get; }
+        public CharacterTraits Traits { get; }
 
         public Dictionary<Enum, SoundEffectInstance> SoundEffects { get; }
 
@@ -83,31 +60,16 @@ namespace JustHR.Classes
             TextPlace = textPlace;
             ClothNum = clothNum;
 
-            IsBoss = traits.IsBoss;
-            FirstName = traits.FirstName;
-            SecondName = traits.SecondName;
-            Patronumic = traits.Patronumic;
-            Birthday = traits.Birthday;
-            Eyes = traits.Eyes;
-            Hairs = traits.Hairs;
-            Accessory = traits.Accessory;
-            Profession = traits.Profession;
-            Grade = traits.Grade;
-            Professionality = traits.Professionality;
-            SocialIntelligence = traits.SocialIntelligence;
-            HairMoraleImpact = traits.HairMoraleImpact;
-            RejectMaraleImpact = traits.RejectMaraleImpact;
-            RequiredSalary = traits.RequiredSalary;
-            Speech = traits.Speech;
+            Traits = traits;
+
             SoundEffects = soundEffects;
 
             this.scene = scene; 
-            foreach(string str in Speech)
+            foreach(string str in Traits.Speech)
                 if (str.Length > 300)
                     throw new ArgumentException("Слишком длинная реплика");
-            Speech = Speech;
         }
-        //волосы, ?уши, аксесуар, одежда
+
         public void DoTick()
         {
             tick++;
@@ -116,13 +78,13 @@ namespace JustHR.Classes
             {
                 if (tick < FIRST_LENGTH)
                 {
-                    scale = 0.8f + (0.2f / FIRST_LENGTH) * tick;
+                    Scale = 0.8f + (0.2f / FIRST_LENGTH) * tick;
                     Pos = new Vector2(originPos.X, originPos.Y - tick + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)tick / FIRST_LENGTH) * 2)));
                 }
                 else if (tick == FIRST_LENGTH)
                 {
                     originPos = Pos;
-                    Door door = scene.GetObject<Door>();
+                    Door door = scene.Objects.Door;
                     door.State = DoorState.Closed;
 
                     SoundEffects[SoundsEnum.door_closing].Play();
@@ -144,7 +106,7 @@ namespace JustHR.Classes
                 else if (tick == FIRST_LENGTH + SECOND_LENGTH + THIRD_LENGTH + 1)
                 {
                     originPos = Pos;
-                    TextPlace.BeginSpeech(Speech);
+                    TextPlace.BeginSpeech(Traits.Speech);
                 }
             } else if (State == CharacterStateEnum.Rejected)
             {
@@ -181,7 +143,7 @@ namespace JustHR.Classes
                     Pos = new Vector2(originPos.X + ((float)curTick / (ACCEPTED_LENGTH + THIRD_LENGTH)) * 750, originPos.Y + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)curTick / (ACCEPTED_LENGTH + THIRD_LENGTH)) * 6)));
                 } else
                 {
-                    if (IsBoss)
+                    if (Traits.IsBoss)
                         if (scene.Hour >= 18)
                         {
                             scene.Exit();

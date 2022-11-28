@@ -10,7 +10,8 @@ namespace JustHR.Classes.SceneObjects
     class Cooler : ISceneObject
     {
         public int CofeeLvl { get; set; } = 100;
-        public float CoffeEffectiveness { get; set; } = 1; //1-0
+        private float coffeEffectiveness = 1;
+        public float CoffeEffectiveness { get { return coffeEffectiveness; } set { coffeEffectiveness = MathHelper.Clamp(value, 0, 1); } }
 
         public Cooler(Controller controller, Dictionary<Enum, SoundEffectInstance> soundEffects)
         {
@@ -24,8 +25,8 @@ namespace JustHR.Classes.SceneObjects
                             soundEffects[SoundsEnum.drink_coffee].Play();
 
                             CofeeLvl -= 10;
-                            Settings.Mentality += (int)Math.Round(5 * CoffeEffectiveness);
-                            CoffeEffectiveness = MathHelper.Clamp(CoffeEffectiveness - 0.3f, 0, 1);
+                            Player.Mentality += (int)Math.Round(5 * CoffeEffectiveness);
+                            CoffeEffectiveness -= 0.3f;
                         }
             };
         }

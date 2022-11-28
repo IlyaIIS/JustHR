@@ -14,36 +14,24 @@ namespace JustHR.Classes.SceneObjects
         {
             controller.OnMouseButtonReleased += (key, x, y) =>
             {
-                foreach (ISceneObject objct in scene.Objects)
-                {
-                    if (objct.GetType() == typeof(Character))
-                    {
-                        Character character = (Character)objct;
-                        if (character.IsSitting())
+                if (key == MouseButton.LeftButton)
+                    if (scene.Objects.Character.IsSitting())
+                        if (!IsExpanded)
                         {
-                            if (key == MouseButton.LeftButton)
+                            if (x > 400 && y > 440 && x < 640 && y < 530)
                             {
-                                if (!IsExpanded)
-                                {
-                                    if (x > 400 && y > 440 && x < 640 && y < 530)
-                                    {
-                                        soundEffects[SoundsEnum.vc_opening].Play();
-                                        IsExpanded = true;
-                                    }
-                                }
-                                else
-                                {
-                                    if (x < 200 || y < 40 || x > 850 || y > 540)
-                                    {
-                                        soundEffects[SoundsEnum.vc_closing].Play();
-                                        IsExpanded = false;
-                                    }
-                                }
+                                soundEffects[SoundsEnum.vc_opening].Play();
+                                IsExpanded = true;
                             }
                         }
-                    }
-                }
-                
+                        else
+                        {
+                            if (x < 200 || y < 40 || x > 850 || y > 540)
+                            {
+                                soundEffects[SoundsEnum.vc_closing].Play();
+                                IsExpanded = false;
+                            }
+                        }
             };
         }
     }

@@ -53,10 +53,10 @@ namespace JustHR
         {
             day = 27;
 
-            Settings.Professionality = 60;
-            Settings.Unity = 60;
-            Settings.Mentality = 60;
-            Settings.BossSatisfaction = 60;
+            Player.Professionality = 60;
+            Player.Unity = 60;
+            Player.Mentality = 60;
+            Player.BossSatisfaction = 60;
 
             var buttons = new List<Button>();
             buttons.Add(new Button(ButtonEnum.StartButton, new Vector2(50, 450), new Vector2(220, 210), controller, () => {
@@ -75,7 +75,7 @@ namespace JustHR
 
         protected override void Initialize()
         {
-
+            
             base.Initialize();
         }
 
@@ -85,7 +85,7 @@ namespace JustHR
 
             canvas = new RenderTarget2D(GraphicsDevice, Settings.WindowWidth, Settings.WindowHeight);
 
-            //load sounds
+            #region sound load
             SoundEffect.MasterVolume = Settings.GlobalVolume; //volume
             soundEffects.Add(SoundsEnum.door_closing, Content.Load<SoundEffect>("sounds/door_closing").CreateInstance());
             soundEffects.Add(SoundsEnum.door_opening, Content.Load<SoundEffect>("sounds/door_opening").CreateInstance());
@@ -122,6 +122,7 @@ namespace JustHR
                 if ((SoundsEnum)entry.Key == SoundsEnum.song_the_blizzard_is_ringing)
                     entry.Value.Volume = 0.7f;
             }
+            #endregion
 
             //load fonts
             var fonts = new Dictionary<Enum, SpriteFont>();
@@ -130,7 +131,7 @@ namespace JustHR
 
             waveShader = Content.Load<Effect>("WaveShader");
 
-            //load sprites
+            #region sprite load
             var sprites = new Dictionary<Enum, Texture2D>();
             sprites.Add(BackgroundsEnum.Street, Content.Load<Texture2D>("Sprites/street"));
             sprites.Add(BackgroundsEnum.Office, Content.Load<Texture2D>("Sprites/office_background"));
@@ -169,7 +170,9 @@ namespace JustHR
             sprites.Add(CatState.AngryPhone, Content.Load<Texture2D>("sprites/angry_cat"));
             sprites.Add(CatState.AngryCooler, Content.Load<Texture2D>("sprites/angry_cooler_cat"));
             sprites.Add(CatState.AngryChair, Content.Load<Texture2D>("sprites/angry_chair_cat"));
+            #endregion
 
+            #region sprite tile set load
             var tileSets = new Dictionary<Enum, SpriteListTileMap>();
             tileSets.Add(GarlandAnimationEnum.BlinkAnimation, new SpriteListTileMap(new List<Texture2D> {
                 Content.Load<Texture2D>("Sprites/lights1"),
@@ -212,6 +215,7 @@ namespace JustHR
                 Content.Load<Texture2D>("Sprites/Characters/fa1"),
                 Content.Load<Texture2D>("Sprites/Characters/fa2"),
             }));
+            #endregion
 
             drawer = new Drawer(spriteBatch, sprites, tileSets, null, fonts, soundEffects);
         }
@@ -234,7 +238,7 @@ namespace JustHR
                 }
 
                 if (ticksSinceSceneStart % (Settings.FPS * Settings.DayLengthInSec) == 0) //тик часа
-                    if (!ofScene.GetObject<Character>().IsBoss)
+                    if (!ofScene.Objects.Character.Traits.IsBoss)
                         ofScene.NextHour();
                 if (ofScene.Hour == 18) //конец дня
                     ofScene.EndDay();
@@ -252,7 +256,7 @@ namespace JustHR
                     }));
                     Phone phone = new Phone(buttons);
 
-                    Settings.Mentality = Math.Max(60, Settings.Mentality);
+                    Player.Mentality = Math.Max(60, Player.Mentality);
 
                     Menu menu = new Menu(phone, null);
 
@@ -265,7 +269,7 @@ namespace JustHR
                     }
                 }
 
-                if (Settings.Mentality < 25 && soundEffects[SoundsEnum.rage].State == SoundState.Stopped)
+                if (Player.Mentality < 25 && soundEffects[SoundsEnum.rage].State == SoundState.Stopped)
                 {
                     soundEffects[SoundsEnum.song_carol_of_the_bells].Stop();
                     soundEffects[SoundsEnum.song_last_christmas_cover].Stop();
@@ -273,7 +277,7 @@ namespace JustHR
                     soundEffects[SoundsEnum.sound_ambient].Stop();
                     soundEffects[SoundsEnum.rage].Play();
                 }
-                if (Settings.Mentality > 25 && soundEffects[SoundsEnum.rage].State == SoundState.Playing)
+                if (Player.Mentality > 25 && soundEffects[SoundsEnum.rage].State == SoundState.Playing)
                 {
                     soundEffects[SoundsEnum.rage].Stop();
                 }
@@ -288,13 +292,11 @@ namespace JustHR
 
         protected override void Draw(GameTime gameTime)
         {
-            
-
             waveShader.Parameters["ElapsedTime"].SetValue((float)gameTime.TotalGameTime.TotalSeconds*1.5f);
             float elapsedWeight = 0;
             if (currentScene is OfficeScene)
             {
-                elapsedWeight = 1 - MathHelper.Clamp(Settings.Mentality / 100f, 0, 0.25f)/0.25f;
+                elapsedWeight = 1 - MathHelper.Clamp(Player.Mentality / 100f, 0, 0.25f)/0.25f;
             }
 
             waveShader.Parameters["ElapsedWeight"].SetValue(elapsedWeight);

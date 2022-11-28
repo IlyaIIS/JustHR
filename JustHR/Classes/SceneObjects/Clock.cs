@@ -12,8 +12,8 @@ namespace JustHR.Classes.SceneObjects
         {
             controller.OnMouseButtonReleased += (key, x, y) =>
            {
-               if (!scene.GetObject<Character>().IsBoss)
-                   if (key == MouseButton.LeftButton)
+               if (key == MouseButton.LeftButton)
+                   if (!scene.Objects.Character.Traits.IsBoss)
                        if (x > 263 && y > 26 && x < 362 && y < 130)
                        {
                            soundEffects[SoundsEnum.tick_1].Stop();

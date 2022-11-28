@@ -9,7 +9,6 @@ namespace JustHR.Classes
     {
         public BackgroundsEnum Background { get; }
         public Menu Menu { get; }
-        public List<ISceneObject> Objects { get; }
     }
 
     interface ISceneObject

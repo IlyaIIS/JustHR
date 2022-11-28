@@ -56,7 +56,7 @@ namespace JustHR.Classes.SceneObjects
                         {
                             SoundEffects[SoundsEnum.cat_hisses].Play();
 
-                            Settings.Mentality = MathHelper.Clamp(Settings.Mentality - 5, 0, 100);
+                            Player.Mentality = MathHelper.Clamp(Player.Mentality - 5, 0, 100);
                         }
                         else
                         {
@@ -66,7 +66,7 @@ namespace JustHR.Classes.SceneObjects
                                 SoundEffects[SoundsEnum.mur_short].Volume = Settings.GlobalVolume;
                                 SoundEffects[SoundsEnum.mur_short].Stop();
                                 SoundEffects[SoundsEnum.mur_short].Play();
-                                Settings.Mentality = MathHelper.Clamp(Settings.Mentality + 5, 0, 100);
+                                Player.Mentality = MathHelper.Clamp(Player.Mentality + 5, 0, 100);
                                 touchNum++;
                             }
                             else
@@ -75,7 +75,7 @@ namespace JustHR.Classes.SceneObjects
                                 SoundEffects[SoundsEnum.cat_hisses].Play();
                                 touchNum = 0;
                                 AngryWeight = 3;
-                                Settings.Mentality = MathHelper.Clamp(Settings.Mentality - 5, 0, 100);
+                                Player.Mentality = MathHelper.Clamp(Player.Mentality - 5, 0, 100);
                             }
                         }
                     }

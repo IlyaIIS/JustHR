@@ -33,6 +33,11 @@ namespace JustHR.Classes.Interface
             page = 0;
         }
 
+        public void Clear()
+        {
+            BeginSpeech(new List<string> { "" });
+        }
+
         public string GetText()
         {
             return speech[page].Substring(0, tick);

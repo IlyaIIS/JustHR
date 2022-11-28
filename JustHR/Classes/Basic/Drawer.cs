@@ -44,7 +44,7 @@ namespace JustHR.Classes.Basic
             if(scene.Background == BackgroundsEnum.Office)
             {
 
-                if(soundEffects[currentSong].State == SoundState.Stopped && Settings.Mentality >= 25)
+                if(soundEffects[currentSong].State == SoundState.Stopped && Player.Mentality >= 25)
                 {
                     soundEffects[SoundsEnum.sound_ambient].Stop();
                     if (currentSong == SoundsEnum.song_last_christmas_cover)
@@ -70,201 +70,173 @@ namespace JustHR.Classes.Basic
                 }
             }
 
-            for (int i = 0; i < scene.Objects.Count; i++)
+            if (scene is OfficeScene)
             {
-                ISceneObject obj = scene.Objects[i];
-                if (obj != null)
+                OfficeScene ofScene = (OfficeScene)scene;
+
+                DrawBackChair();
+                DrawCalendar();
+                DrawChristmasTree();
+                DrawClock();
+                DrawCooler();
+                DrawCurriculumVitae();
+                DrawDoor();
+                DrawSideChair();
+                DrawCharacter();
+                DrawTable();
+                DrawCat();
+                DrawWhiteboard();
+                DrawGarland();
+
+                #region Методы рисования предметов сцены офиса
+                void DrawBackChair()
                 {
-                    Type type = obj.GetType();
-                    if (type == typeof(BackChair))
-                    {
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.BackChair], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.017f);
-                    }
-                    else if (type == typeof(Calendar))
-                    {
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Calendar], new Vector2(460, -90), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.002f);
-                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], ((OfficeScene)scene).Day.ToString(), new Vector2(450+ 460, 220-90), Color.Black, 0, Vector2.Zero, 2f, SpriteEffects.None, 0.009f);
-                    }
-                    else if (type == typeof(ChristmasTree))
-                    {
-                        DrawChristmasTree();
-                    }
-                    else if (type == typeof(Clock))
-                    {
-                        DrawClock();
-                    }
-                    else if (type == typeof(Cooler))
-                    {
-                        DrawCooler();
-                    }
-                    else if (type == typeof(CurriculumVitae))
-                    {
-                        DrawCurriculumVitae();
-                    }
-                    else if (type == typeof(Door))
-                    {
-                        DrawDoor();
-                    }
-                    else if (type == typeof(SideChair))
-                    {
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.SideChair], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.026f);
-                    }
-                    else if (type == typeof(Character))
-                    {
-                        DrawCharacter();
-                    }
-                    else if (type == typeof(Table))
-                    {
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Table], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.0215f);
-                    }
-                    else if (type == typeof(Cat))
-                    {
-                        DrawCat();
-                    }
-                    else if (type == typeof(Whiteboard))
-                    {
-                        DrawWhiteboard();
-                    } else if (type == typeof(Garland))
-                    {
-                        DrawGarland();
-                    } else
-                    {
-                        throw new NotImplementedException("Забыл дабавить отрисовку объекта сцены");
-                    }
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.BackChair], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.017f);
+                }
+                void DrawCalendar()
+                {
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Calendar], new Vector2(460, -90), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.002f);
+                    spriteBatch.DrawString(fonts[FontsEnum.Pixel], ((OfficeScene)scene).Day.ToString(), new Vector2(450 + 460, 220 - 90), Color.Black, 0, Vector2.Zero, 2f, SpriteEffects.None, 0.009f);
+                }
+                void DrawChristmasTree()
+                {
+                    ChristmasTree tree = ofScene.Objects.ChristmasTree;
+                    spriteTileMaps[TreeAnimationEnum.Blink].Draw(tree.Animator.GetFrame(), (texture) => spriteBatch.Draw(texture, new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.025f));
+                    tree.Animator.DoTick();
+                }
+                void DrawClock()
+                {
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Clock], new Vector2(263, 26), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.004f);
+                    float rotation = MathF.PI + MathF.PI * 1.5f * ((((OfficeScene)scene).Hour - 9) / 9f);
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.ClockArrow], new Vector2(310, 80), null, Color.White, rotation, new Vector2(
+                            sprites[SceneObjectSpriteEnum.ClockArrow].Width / 2,
+                            sprites[SceneObjectSpriteEnum.ClockArrow].Height / 2),
+                            1, SpriteEffects.None, 0.005f);
+                }
+                void DrawCooler()
+                {
+                    Cooler cooler = ofScene.Objects.Cooler;
 
-                    void DrawChristmasTree()
+                    float height = cooler.CofeeLvl * 1.4f;
+                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(260, 380 - height), null, new Color(112, 78, 55, 200), 0, Vector2.Zero, new Vector2(111, height), SpriteEffects.None, 0.015f);
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Cooler], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.0151f);
+                }
+                void DrawCurriculumVitae()
+                {
+                    if (ofScene.Objects.CurriculumVitae.IsExpanded)
                     {
-                        ChristmasTree tree = (ChristmasTree)obj;
-                        spriteTileMaps[TreeAnimationEnum.Blink].Draw(tree.Animator.GetFrame(), (texture) => spriteBatch.Draw(texture, new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.025f));
-                        tree.Animator.DoTick();
-                    }
-                    void DrawClock()
-                    {
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Clock], new Vector2(263, 26), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.004f);
-                        float rotation = MathF.PI + MathF.PI * 1.5f * ((((OfficeScene)scene).Hour - 9) / 9f);
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.ClockArrow], new Vector2(310, 80), null, Color.White, rotation, new Vector2(
-                                sprites[SceneObjectSpriteEnum.ClockArrow].Width / 2,
-                                sprites[SceneObjectSpriteEnum.ClockArrow].Height / 2),
-                                1, SpriteEffects.None, 0.005f);
-                    }
-                    void DrawCooler()
-                    {
-                        Cooler cooler = (Cooler)obj;
+                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.ExpandedCurriculumVitae], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.2f);
 
-                        float height = cooler.CofeeLvl * 1.4f;
-                        spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(260, 380-height), null, new Color(112, 78, 55, 200), 0, Vector2.Zero, new Vector2(111, height), SpriteEffects.None, 0.015f);
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Cooler], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.0151f);
-                    }
-                    void DrawCurriculumVitae() 
-                    {
-                        CurriculumVitae cv = (CurriculumVitae)obj;
-                        if (cv.IsExpanded)
-                        {
-                            spriteBatch.Draw(sprites[SceneObjectSpriteEnum.ExpandedCurriculumVitae], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.2f);
+                        Character character = ofScene.Objects.Character;
+                        string text = character.Traits.FirstName + " " + character.Traits.SecondName + " " + character.Traits.Patronumic + '\n';
+                        text += character.Traits.Birthday + '\n';
+                        text += "Специальность:    " + (character.Traits.IsBoss ? "Он тут босс" : profTranslates[character.Traits.Profession]) + '\n';
+                        text += "Грэйд:            " + character.Traits.Grade.ToString() + '\n';
+                        text += "Желаемая зарплата:";
+                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(470, 75), Color.Black, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
+                        string salary = character.Traits.RequiredSalary + " тыс.";
+                        float dif = (Settings.AvarajeSalary[character.Traits.Grade] - character.Traits.RequiredSalary) / (Settings.AvarajeSalary[character.Traits.Grade] * 0.3f);
+                        Color color = (dif < -0.5f) ? Color.Red : dif < 0.5f ? Color.Orange : Color.Green;
+                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], salary, new Vector2(725, 205), color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
 
-                            Character character = ((OfficeScene)scene).GetObject<Character>();
-                            string text = character.FirstName + " " + character.SecondName + " " + character.Patronumic + '\n';
-                            text += character.Birthday + '\n';
-                            text += "Специальность:    " + (character.IsBoss ? "Он тут босс" : profTranslates[character.Profession]) + '\n';
-                            text += "Грэйд:            " + character.Grade.ToString() + '\n';
-                            text += "Желаемая зарплата:"; 
-                            spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(470, 75), Color.Black, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
-                            string salary = character.RequiredSalary + " тыс.";
-                            float dif = (Settings.AvarajeSalary[character.Grade] - character.RequiredSalary) / (Settings.AvarajeSalary[character.Grade] * 0.3f);
-                            Color color = (dif < -0.5f) ? Color.Red : dif < 0.5f ? Color.Orange : Color.Green;
-                            spriteBatch.DrawString(fonts[FontsEnum.Pixel], salary, new Vector2(725, 205), color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
-
-                            text = "Профессионализм: " + (character.Professionality > 0 ? "+" : "") + character.Professionality;
-                            color = character.Professionality < 0 ? Color.Red : character.Professionality == 0 ? Color.Orange : Color.Green;
-                            spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(525, 455), color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
-                            text = "Социанльные навыки: " + (character.SocialIntelligence > 0 ? "+" : "") + character.SocialIntelligence;
-                            color = character.SocialIntelligence < 0 ? Color.Red : character.SocialIntelligence == 0 ? Color.Orange : Color.Green;
-                            spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(525, 490), color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
-                        }
-                        else
-                        {
-                            Character character = ((OfficeScene)scene).GetCharacter();
-                            if (character.IsSitting())
-                                spriteBatch.Draw(sprites[SceneObjectSpriteEnum.CurriculumVitae], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.0216f);
-                        }
+                        text = "Профессионализм: " + (character.Traits.Professionality > 0 ? "+" : "") + character.Traits.Professionality;
+                        color = character.Traits.Professionality < 0 ? Color.Red : character.Traits.Professionality == 0 ? Color.Orange : Color.Green;
+                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(525, 455), color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
+                        text = "Социанльные навыки: " + (character.Traits.SocialIntelligence > 0 ? "+" : "") + character.Traits.SocialIntelligence;
+                        color = character.Traits.SocialIntelligence < 0 ? Color.Red : character.Traits.SocialIntelligence == 0 ? Color.Orange : Color.Green;
+                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(525, 490), color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
                     }
-                    void DrawDoor()
+                    else
                     {
-                        Door door = ((OfficeScene)scene).GetObject<Door>();
-                        if (door.State == DoorState.Closed)
-                            spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Door], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.006f);
-                        else
-                            spriteBatch.Draw(sprites[SceneObjectSpriteEnum.OpenedDoor], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.006f);
-                    }
-                    void DrawCharacter()
-                    {
-                        Character character = (Character)obj;
-                        if (character.IsSitting())
-                        {
-                            spriteBatch.Draw(sprites[SpriteEnum.SittingCharacter], character.Pos, null, Color.White, 0, Vector2.Zero, character.scale, SpriteEffects.None, 0.022f);
-                            spriteTileMaps[ClothesEnum.SittingClothes].Draw(character.ClothNum, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.scale, SpriteEffects.None, 0.023f));
-                        }
-                        else
-                        {
-                            spriteBatch.Draw(sprites[SpriteEnum.Character], character.Pos, null, Color.White, 0, Vector2.Zero, character.scale, SpriteEffects.None, 0.020f);
-                            spriteTileMaps[ClothesEnum.Clothes].Draw(character.ClothNum, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.scale, SpriteEffects.None, 0.021f));
-                        }
-                        spriteTileMaps[ClothesEnum.Eyes].Draw(character.Eyes, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.scale, SpriteEffects.None, 0.0235f));
-                        spriteTileMaps[ClothesEnum.Hairs].Draw(character.Hairs, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.scale, SpriteEffects.None, 0.0236f));
-                        if (character.Accessory != -1)
-                            spriteTileMaps[ClothesEnum.Accessories].Draw(character.Accessory, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.scale, SpriteEffects.None, 0.0237f));
-
-                        character.DoTick();
-                    }
-                    void DrawCat()
-                    {
-                        Cat cat = (Cat)obj;
-                        if (cat.Position == CatPosition.OnChair)
-                        {
-                            CatState state = cat.IsAngry ? CatState.AngryChair : CatState.Chair;
-                            spriteBatch.Draw(sprites[state], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.027f);
-                        }
-                        else if (cat.Position == CatPosition.OnCooler)
-                        {
-                            CatState state = cat.IsAngry ? CatState.AngryCooler : CatState.Cooler;
-                            spriteBatch.Draw(sprites[state], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.016f);
-                        }
-                        else if (cat.Position == CatPosition.OnTable)
-                        {
-                            CatState state = cat.IsAngry ? CatState.AngryPhone : CatState.Phone;
-                            spriteBatch.Draw(sprites[state], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.13f);
-                        }
-                    }
-                    void DrawWhiteboard()
-                    {
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Whiteboard], new Vector2(-180, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.003f);
-                        OfficeScene ofScene = ((OfficeScene)scene);
-                        string text = "Нужно нанять\n";
-                        foreach (KeyValuePair<ProfessionEnum, int> pair in ofScene.Requirements)
-                        {
-                            text += profTranslates[pair.Key] + ": " + pair.Value + " (" + ofScene.HairedRatio[pair.Key] + ")\n";
-                        }
-                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(410, 185), Color.Black, 0, Vector2.Zero, 0.95f, SpriteEffects.None, 0.009f);
-
-                        spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20, 200), null, new Color(230, 220, 220), 0, Vector2.Zero, new Vector2(18, 100), SpriteEffects.None, 0.0032f);
-                        spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 3, 200), null, new Color(230, 220, 220), 0, Vector2.Zero, new Vector2(18, 100), SpriteEffects.None, 0.0032f);
-                        spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 5, 200), null, new Color(230, 220, 220), 0, Vector2.Zero, new Vector2(18, 100), SpriteEffects.None, 0.0032f);
-                        spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 7, 200), null, new Color(230, 220, 220), 0, Vector2.Zero, new Vector2(18, 100), SpriteEffects.None, 0.0032f);
-
-                        spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20, 200 + (100 - Settings.BossSatisfaction)), null, new Color(250 - Settings.BossSatisfaction / 2, 170, 65), 0, Vector2.Zero, new Vector2(18, Settings.BossSatisfaction), SpriteEffects.None, 0.0035f);
-                        spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 3, 200 + (100 - Settings.Mentality)), null, new Color(160 - Settings.Mentality / 2, 166, 122), 0, Vector2.Zero, new Vector2(18, Settings.Mentality), SpriteEffects.None, 0.0035f);
-                        spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 5, 200 + (100 - Settings.Unity)), null, new Color(245, 193, 126 - Settings.Unity / 2), 0, Vector2.Zero, new Vector2(18, Settings.Unity), SpriteEffects.None, 0.0035f);
-                        spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 7, 200 + (100 - Settings.Professionality)), null, new Color(220, 190, 200 - Settings.Professionality / 2), 0, Vector2.Zero, new Vector2(18, Settings.Professionality), SpriteEffects.None, 0.0035f);
-
-                    }
-                    void DrawGarland()
-                    {
-                        Garland garland = (Garland)obj;
-                        spriteTileMaps[GarlandAnimationEnum.BlinkAnimation].Draw(garland.Animator.GetFrame(), (texute) =>
-                            spriteBatch.Draw(texute, new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.004f));
-                        garland.Animator.DoTick();
+                        if (ofScene.Objects.Character.IsSitting())
+                            spriteBatch.Draw(sprites[SceneObjectSpriteEnum.CurriculumVitae], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.0216f);
                     }
                 }
+                void DrawDoor()
+                {
+                    Door door = ofScene.Objects.Door;
+                    if (door.State == DoorState.Closed)
+                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Door], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.006f);
+                    else
+                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.OpenedDoor], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.006f);
+                }
+                void DrawSideChair()
+                {
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.SideChair], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.026f);
+                }
+                void DrawCharacter()
+                {
+                    Character character = ofScene.Objects.Character;
+                    if (character.IsSitting())
+                    {
+                        spriteBatch.Draw(sprites[SpriteEnum.SittingCharacter], character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, 0.022f);
+                        spriteTileMaps[ClothesEnum.SittingClothes].Draw(character.ClothNum, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, 0.023f));
+                    }
+                    else
+                    {
+                        spriteBatch.Draw(sprites[SpriteEnum.Character], character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, 0.020f);
+                        spriteTileMaps[ClothesEnum.Clothes].Draw(character.ClothNum, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, 0.021f));
+                    }
+                    spriteTileMaps[ClothesEnum.Eyes].Draw(character.Traits.Eyes, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, 0.0235f));
+                    spriteTileMaps[ClothesEnum.Hairs].Draw(character.Traits.Hairs, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, 0.0236f));
+                    if (character.Traits.Accessory != -1)
+                        spriteTileMaps[ClothesEnum.Accessories].Draw(character.Traits.Accessory, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, 0.0237f));
+
+                    character.DoTick();
+                }
+                void DrawTable()
+                {
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Table], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.0215f);
+                }
+                void DrawCat()
+                {
+                    Cat cat = ofScene.Objects.Cat;
+                    if (cat.Position == CatPosition.OnChair)
+                    {
+                        CatState state = cat.IsAngry ? CatState.AngryChair : CatState.Chair;
+                        spriteBatch.Draw(sprites[state], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.027f);
+                    }
+                    else if (cat.Position == CatPosition.OnCooler)
+                    {
+                        CatState state = cat.IsAngry ? CatState.AngryCooler : CatState.Cooler;
+                        spriteBatch.Draw(sprites[state], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.016f);
+                    }
+                    else if (cat.Position == CatPosition.OnTable)
+                    {
+                        CatState state = cat.IsAngry ? CatState.AngryPhone : CatState.Phone;
+                        spriteBatch.Draw(sprites[state], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.13f);
+                    }
+                }
+                void DrawWhiteboard()
+                {
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Whiteboard], new Vector2(-180, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.003f);
+                    OfficeScene ofScene = ((OfficeScene)scene);
+                    string text = "Нужно нанять\n";
+                    foreach (KeyValuePair<ProfessionEnum, int> pair in ofScene.Requirements)
+                    {
+                        text += profTranslates[pair.Key] + ": " + pair.Value + " (" + ofScene.HairedRatio[pair.Key] + ")\n";
+                    }
+                    spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(410, 185), Color.Black, 0, Vector2.Zero, 0.95f, SpriteEffects.None, 0.009f);
+
+                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20, 200), null, new Color(230, 220, 220), 0, Vector2.Zero, new Vector2(18, 100), SpriteEffects.None, 0.0032f);
+                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 3, 200), null, new Color(230, 220, 220), 0, Vector2.Zero, new Vector2(18, 100), SpriteEffects.None, 0.0032f);
+                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 5, 200), null, new Color(230, 220, 220), 0, Vector2.Zero, new Vector2(18, 100), SpriteEffects.None, 0.0032f);
+                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 7, 200), null, new Color(230, 220, 220), 0, Vector2.Zero, new Vector2(18, 100), SpriteEffects.None, 0.0032f);
+
+                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20, 200 + (100 - Player.BossSatisfaction)), null, new Color(250 - Player.BossSatisfaction / 2, 170, 65), 0, Vector2.Zero, new Vector2(18, Player.BossSatisfaction), SpriteEffects.None, 0.0035f);
+                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 3, 200 + (100 - Player.Mentality)), null, new Color(160 - Player.Mentality / 2, 166, 122), 0, Vector2.Zero, new Vector2(18, Player.Mentality), SpriteEffects.None, 0.0035f);
+                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 5, 200 + (100 - Player.Unity)), null, new Color(245, 193, 126 - Player.Unity / 2), 0, Vector2.Zero, new Vector2(18, Player.Unity), SpriteEffects.None, 0.0035f);
+                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 7, 200 + (100 - Player.Professionality)), null, new Color(220, 190, 200 - Player.Professionality / 2), 0, Vector2.Zero, new Vector2(18, Player.Professionality), SpriteEffects.None, 0.0035f);
+
+                }
+                void DrawGarland()
+                {
+                    Garland garland = ofScene.Objects.Garland;
+                    spriteTileMaps[GarlandAnimationEnum.BlinkAnimation].Draw(garland.Animator.GetFrame(), (texute) =>
+                        spriteBatch.Draw(texute, new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.004f));
+                    garland.Animator.DoTick();
+                }
+                #endregion 
             }
 
             if (scene is StreetScene)
@@ -306,7 +278,7 @@ namespace JustHR.Classes.Basic
                 }
 
                 string text1;
-                if (Settings.Mentality < 25)
+                if (Player.Mentality < 25)
                     text1 = builder.ToString().ToUpper();
                 else
                     text1 = builder.ToString();
