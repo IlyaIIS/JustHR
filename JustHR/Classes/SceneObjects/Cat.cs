@@ -9,9 +9,13 @@ namespace JustHR.Classes.SceneObjects
 {
     class Cat : ISceneObject
     {
+        public float Z { get; set; }
+        public Rectangle Collision { get; private set; }
+
         public CatPosition Position { get; }
         public int AngryWeight { get; set; }
         public bool IsAngry { get { return AngryWeight > 0; } }
+
         public Dictionary<Enum, SoundEffectInstance> SoundEffects;
         private int touchNum = 0;
 

@@ -3,11 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework;
 
 namespace JustHR.Classes.SceneObjects
 {
     class Clock : ISceneObject
     {
+        public float Z { get; set; }
+        public Rectangle Collision { get; private set; }
         public Clock(OfficeScene scene, Controller controller, Dictionary<Enum, SoundEffectInstance> soundEffects)
         {
             controller.OnMouseButtonReleased += (key, x, y) =>

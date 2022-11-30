@@ -36,19 +36,18 @@ namespace JustHR.Classes
 
             Objects = new OfficeSceneObjectsHolder
             {
-                Whiteboard = new Whiteboard(),
-                Garland = new Garland(),
-                Door = new Door(this, controller),
-                ChristmasTree = new ChristmasTree(),
-                Calendar = new Calendar(),
-                Clock = new Clock(this, controller, SoundEffects),
-                Cooler = new Cooler(controller, SoundEffects),
-                BackChair = new BackChair(),
-                SideChair = new SideChair(),
-                Character = null,
-                Table = new Table(),
-                CurriculumVitae = new CurriculumVitae(this, controller, SoundEffects),
-                Cat = new Cat(controller, SoundEffects),
+                CurriculumVitae = new CurriculumVitae(this, controller, SoundEffects) { Z = 0.2f },
+                Whiteboard = new Whiteboard() { Z = 0.1f },
+                SideChair = new SideChair() { Z = 0.026f },
+                ChristmasTree = new ChristmasTree() { Z = 0.025f },
+                Table = new Table() { Z = 0.0215f },
+                BackChair = new BackChair() { Z = 0.017f },
+                Cooler = new Cooler(controller, SoundEffects) { Z = 0.015f },
+                Door = new Door(this, controller) { Z = 0.006f },
+                Garland = new Garland() { Z = 0.004f },
+                Clock = new Clock(this, controller, SoundEffects) { Z = 0.004f },
+                Calendar = new Calendar() { Z = 0.002f },
+                Cat = new Cat(controller, SoundEffects) { Z = 0f },
             };
 
             Day = day;
@@ -536,7 +535,7 @@ namespace JustHR.Classes
         private void GenerateBoss()
         {
             //начало дня
-            if (Objects.Character == null)
+            if (!Objects.Contains(typeof(Character)))
             {
                 var text2 = new List<string>
                     {
@@ -669,19 +668,36 @@ namespace JustHR.Classes
 
     class OfficeSceneObjectsHolder
     {
-        public Whiteboard Whiteboard { get; internal set; }
-        public Garland Garland { get; internal set; }
-        public Door Door { get; internal set; }
-        public ChristmasTree ChristmasTree { get; internal set; }
-        public Calendar Calendar { get; internal set; }
-        public Clock Clock { get; internal set; }
-        public Cooler Cooler { get; internal set; }
-        public BackChair BackChair { get; internal set; }
-        public SideChair SideChair { get; internal set; }
-        public Character Character { get; internal set; }
-        public Table Table { get; internal set; }
-        public CurriculumVitae CurriculumVitae { get; internal set; }
-        public Cat Cat { get; internal set; }
+        private readonly Dictionary<Type, ISceneObject> dictionary = new Dictionary<Type, ISceneObject>();
+        public List<ISceneObject> ObjectsCollection { get { return new List<ISceneObject>(dictionary.Values); } }
+        public bool Contains(Type type) => dictionary.ContainsKey(type);
+
+        public Whiteboard Whiteboard { get { return (Whiteboard)dictionary[typeof(Whiteboard)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public Garland Garland { get { return (Garland)dictionary[typeof(Garland)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public Door Door { get { return (Door)dictionary[typeof(Door)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public ChristmasTree ChristmasTree { get { return (ChristmasTree)dictionary[typeof(ChristmasTree)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public Calendar Calendar { get { return (Calendar)dictionary[typeof(Calendar)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public Clock Clock { get { return (Clock)dictionary[typeof(Clock)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public Cooler Cooler { get { return (Cooler)dictionary[typeof(Cooler)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public BackChair BackChair { get { return (BackChair)dictionary[typeof(BackChair)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public SideChair SideChair { get { return (SideChair)dictionary[typeof(SideChair)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public Character Character { get { return (Character)dictionary[typeof(Character)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public Table Table { get { return (Table)dictionary[typeof(Table)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public CurriculumVitae CurriculumVitae { get { return (CurriculumVitae)dictionary[typeof(CurriculumVitae)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
+        public Cat Cat { get { return (Cat)dictionary[typeof(Cat)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
     }
 
     enum BossState

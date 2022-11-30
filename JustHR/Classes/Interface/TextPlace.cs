@@ -6,7 +6,7 @@ using System.Text;
 
 namespace JustHR.Classes.Interface
 {
-    class TextPlace : ISceneObject
+    class TextPlace
     {
         private int tick;
         private List<string> speech = new List<string> { "" };

@@ -16,6 +16,7 @@ namespace JustHR
     public class Game1 : Game
     {
         Effect waveShader;
+        Effect wrapShader;
         RenderTarget2D canvas;
 
         private GraphicsDeviceManager graphics;
@@ -87,34 +88,34 @@ namespace JustHR
 
             #region sound load
             SoundEffect.MasterVolume = Settings.GlobalVolume; //volume
-            soundEffects.Add(SoundsEnum.door_closing, Content.Load<SoundEffect>("sounds/door_closing").CreateInstance());
-            soundEffects.Add(SoundsEnum.door_opening, Content.Load<SoundEffect>("sounds/door_opening").CreateInstance());
-            soundEffects.Add(SoundsEnum.drink_coffee, Content.Load<SoundEffect>("sounds/drink_coffee").CreateInstance());
-            soundEffects.Add(SoundsEnum.mur_long, Content.Load<SoundEffect>("sounds/mur_long").CreateInstance());
-            soundEffects.Add(SoundsEnum.mur_long_with_a_pet_cat, Content.Load<SoundEffect>("sounds/mur_long_with_a_pet_cat").CreateInstance());
-            soundEffects.Add(SoundsEnum.mur_short, Content.Load<SoundEffect>("sounds/mur_short").CreateInstance());
-            soundEffects.Add(SoundsEnum.mur_super_short, Content.Load<SoundEffect>("sounds/mur_super_short").CreateInstance());
-            soundEffects.Add(SoundsEnum.phone_btn_sound_1, Content.Load<SoundEffect>("sounds/phone_btn_sound_1").CreateInstance());
-            soundEffects.Add(SoundsEnum.phone_btn_sound_2, Content.Load<SoundEffect>("sounds/phone_btn_sound_2").CreateInstance());
-            soundEffects.Add(SoundsEnum.phone_btn_sound_3, Content.Load<SoundEffect>("sounds/phone_btn_sound_3").CreateInstance());
-            soundEffects.Add(SoundsEnum.song_carol_of_the_bells, Content.Load<SoundEffect>("sounds/song_carol_of_the_bells").CreateInstance());
-            soundEffects.Add(SoundsEnum.song_last_christmas_cover, Content.Load<SoundEffect>("sounds/song_last_christmas_cover").CreateInstance());
-            soundEffects.Add(SoundsEnum.song_the_blizzard_is_ringing, Content.Load<SoundEffect>("sounds/song_the_blizzard_is_ringing").CreateInstance());
-            soundEffects.Add(SoundsEnum.sound_ambient, Content.Load<SoundEffect>("sounds/sound_ambient").CreateInstance());
-            soundEffects.Add(SoundsEnum.vc_closing, Content.Load<SoundEffect>("sounds/vc_closing").CreateInstance());
-            soundEffects.Add(SoundsEnum.vc_opening, Content.Load<SoundEffect>("sounds/vc_opening").CreateInstance());
-            soundEffects.Add(SoundsEnum.voice_long, Content.Load<SoundEffect>("sounds/voice_long").CreateInstance());
-            soundEffects.Add(SoundsEnum.voice_long_raised_tone, Content.Load<SoundEffect>("sounds/voice_long_raised_tone").CreateInstance());
-            soundEffects.Add(SoundsEnum.voice_short, Content.Load<SoundEffect>("sounds/voice_short").CreateInstance());
-            soundEffects.Add(SoundsEnum.cat_hisses, Content.Load<SoundEffect>("sounds/cat_hisses").CreateInstance());
-            soundEffects.Add(SoundsEnum.six_steps, Content.Load<SoundEffect>("sounds/six_steps").CreateInstance());
-            soundEffects.Add(SoundsEnum.step_1, Content.Load<SoundEffect>("sounds/step_1").CreateInstance());
-            soundEffects.Add(SoundsEnum.step_2, Content.Load<SoundEffect>("sounds/step_2").CreateInstance());
-            soundEffects.Add(SoundsEnum.tap_a_clock, Content.Load<SoundEffect>("sounds/tap_a_clock").CreateInstance());
-            soundEffects.Add(SoundsEnum.tick_1, Content.Load<SoundEffect>("sounds/tick_1").CreateInstance());
-            soundEffects.Add(SoundsEnum.tick_2, Content.Load<SoundEffect>("sounds/tick_2").CreateInstance());
-            soundEffects.Add(SoundsEnum.transition_sound, Content.Load<SoundEffect>("sounds/transition_sound").CreateInstance());
-            soundEffects.Add(SoundsEnum.rage, Content.Load<SoundEffect>("sounds/Rage").CreateInstance());
+            soundEffects.Add(SoundsEnum.door_closing, Content.Load<SoundEffect>("Sounds/door_closing").CreateInstance());
+            soundEffects.Add(SoundsEnum.door_opening, Content.Load<SoundEffect>("Sounds/door_opening").CreateInstance());
+            soundEffects.Add(SoundsEnum.drink_coffee, Content.Load<SoundEffect>("Sounds/drink_coffee").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_long, Content.Load<SoundEffect>("Sounds/mur_long").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_long_with_a_pet_cat, Content.Load<SoundEffect>("Sounds/mur_long_with_a_pet_cat").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_short, Content.Load<SoundEffect>("Sounds/mur_short").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_super_short, Content.Load<SoundEffect>("Sounds/mur_super_short").CreateInstance());
+            soundEffects.Add(SoundsEnum.phone_btn_sound_1, Content.Load<SoundEffect>("Sounds/phone_btn_sound_1").CreateInstance());
+            soundEffects.Add(SoundsEnum.phone_btn_sound_2, Content.Load<SoundEffect>("Sounds/phone_btn_sound_2").CreateInstance());
+            soundEffects.Add(SoundsEnum.phone_btn_sound_3, Content.Load<SoundEffect>("Sounds/phone_btn_sound_3").CreateInstance());
+            soundEffects.Add(SoundsEnum.song_carol_of_the_bells, Content.Load<SoundEffect>("Sounds/song_carol_of_the_bells").CreateInstance());
+            soundEffects.Add(SoundsEnum.song_last_christmas_cover, Content.Load<SoundEffect>("Sounds/song_last_christmas_cover").CreateInstance());
+            soundEffects.Add(SoundsEnum.song_the_blizzard_is_ringing, Content.Load<SoundEffect>("Sounds/song_the_blizzard_is_ringing").CreateInstance());
+            soundEffects.Add(SoundsEnum.sound_ambient, Content.Load<SoundEffect>("Sounds/sound_ambient").CreateInstance());
+            soundEffects.Add(SoundsEnum.vc_closing, Content.Load<SoundEffect>("Sounds/vc_closing").CreateInstance());
+            soundEffects.Add(SoundsEnum.vc_opening, Content.Load<SoundEffect>("Sounds/vc_opening").CreateInstance());
+            soundEffects.Add(SoundsEnum.voice_long, Content.Load<SoundEffect>("Sounds/voice_long").CreateInstance());
+            soundEffects.Add(SoundsEnum.voice_long_raised_tone, Content.Load<SoundEffect>("Sounds/voice_long_raised_tone").CreateInstance());
+            soundEffects.Add(SoundsEnum.voice_short, Content.Load<SoundEffect>("Sounds/voice_short").CreateInstance());
+            soundEffects.Add(SoundsEnum.cat_hisses, Content.Load<SoundEffect>("Sounds/cat_hisses").CreateInstance());
+            soundEffects.Add(SoundsEnum.six_steps, Content.Load<SoundEffect>("Sounds/six_steps").CreateInstance());
+            soundEffects.Add(SoundsEnum.step_1, Content.Load<SoundEffect>("Sounds/step_1").CreateInstance());
+            soundEffects.Add(SoundsEnum.step_2, Content.Load<SoundEffect>("Sounds/step_2").CreateInstance());
+            soundEffects.Add(SoundsEnum.tap_a_clock, Content.Load<SoundEffect>("Sounds/tap_a_clock").CreateInstance());
+            soundEffects.Add(SoundsEnum.tick_1, Content.Load<SoundEffect>("Sounds/tick_1").CreateInstance());
+            soundEffects.Add(SoundsEnum.tick_2, Content.Load<SoundEffect>("Sounds/tick_2").CreateInstance());
+            soundEffects.Add(SoundsEnum.transition_sound, Content.Load<SoundEffect>("Sounds/transition_sound").CreateInstance());
+            soundEffects.Add(SoundsEnum.rage, Content.Load<SoundEffect>("Sounds/Rage").CreateInstance());
 
             foreach (KeyValuePair<Enum, SoundEffectInstance> entry in soundEffects)
             {
@@ -130,6 +131,7 @@ namespace JustHR
             fonts.Add(FontsEnum.Pixel, Content.Load<SpriteFont>("pixel_font"));
 
             waveShader = Content.Load<Effect>("WaveShader");
+            wrapShader = Content.Load<Effect>("WrapShader");
 
             #region sprite load
             var sprites = new Dictionary<Enum, Texture2D>();

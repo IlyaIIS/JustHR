@@ -6,7 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Xna.Framework.Audio;
 
 namespace JustHR.Classes.Basic
 {
@@ -91,41 +90,41 @@ namespace JustHR.Classes.Basic
                 #region Методы рисования предметов сцены офиса
                 void DrawBackChair()
                 {
-                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.BackChair], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.017f);
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.BackChair], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.BackChair.Z);
                 }
                 void DrawCalendar()
                 {
-                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Calendar], new Vector2(460, -90), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.002f);
-                    spriteBatch.DrawString(fonts[FontsEnum.Pixel], ((OfficeScene)scene).Day.ToString(), new Vector2(450 + 460, 220 - 90), Color.Black, 0, Vector2.Zero, 2f, SpriteEffects.None, 0.009f);
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Calendar], new Vector2(460, -90), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.Calendar.Z);
+                    spriteBatch.DrawString(fonts[FontsEnum.Pixel], ((OfficeScene)scene).Day.ToString(), new Vector2(450 + 460, 220 - 90), Color.Black, 0, Vector2.Zero, 2f, SpriteEffects.None, ofScene.Objects.Calendar.Z + 0.001f);
                 }
                 void DrawChristmasTree()
                 {
                     ChristmasTree tree = ofScene.Objects.ChristmasTree;
-                    spriteTileMaps[TreeAnimationEnum.Blink].Draw(tree.Animator.GetFrame(), (texture) => spriteBatch.Draw(texture, new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.025f));
+                    spriteTileMaps[TreeAnimationEnum.Blink].Draw(tree.Animator.GetFrame(), (texture) => spriteBatch.Draw(texture, new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.ChristmasTree.Z));
                     tree.Animator.DoTick();
                 }
                 void DrawClock()
                 {
-                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Clock], new Vector2(263, 26), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.004f);
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Clock], new Vector2(263, 26), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.Clock.Z);
                     float rotation = MathF.PI + MathF.PI * 1.5f * ((((OfficeScene)scene).Hour - 9) / 9f);
                     spriteBatch.Draw(sprites[SceneObjectSpriteEnum.ClockArrow], new Vector2(310, 80), null, Color.White, rotation, new Vector2(
                             sprites[SceneObjectSpriteEnum.ClockArrow].Width / 2,
                             sprites[SceneObjectSpriteEnum.ClockArrow].Height / 2),
-                            1, SpriteEffects.None, 0.005f);
+                            1, SpriteEffects.None, ofScene.Objects.Clock.Z + 0.001f);
                 }
                 void DrawCooler()
                 {
                     Cooler cooler = ofScene.Objects.Cooler;
 
                     float height = cooler.CofeeLvl * 1.4f;
-                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(260, 380 - height), null, new Color(112, 78, 55, 200), 0, Vector2.Zero, new Vector2(111, height), SpriteEffects.None, 0.015f);
-                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Cooler], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.0151f);
+                    spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(260, 380 - height), null, new Color(112, 78, 55, 200), 0, Vector2.Zero, new Vector2(111, height), SpriteEffects.None, ofScene.Objects.Cooler.Z);
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Cooler], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.Cooler.Z + 0.001f);
                 }
                 void DrawCurriculumVitae()
                 {
                     if (ofScene.Objects.CurriculumVitae.IsExpanded)
                     {
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.ExpandedCurriculumVitae], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.2f);
+                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.ExpandedCurriculumVitae], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.CurriculumVitae.Z);
 
                         Character character = ofScene.Objects.Character;
                         string text = character.Traits.FirstName + " " + character.Traits.SecondName + " " + character.Traits.Patronumic + '\n';
@@ -133,36 +132,36 @@ namespace JustHR.Classes.Basic
                         text += "Специальность:    " + (character.Traits.IsBoss ? "Он тут босс" : profTranslates[character.Traits.Profession]) + '\n';
                         text += "Грэйд:            " + character.Traits.Grade.ToString() + '\n';
                         text += "Желаемая зарплата:";
-                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(470, 75), Color.Black, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
+                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(470, 75), Color.Black, 0, Vector2.Zero, 1f, SpriteEffects.None, ofScene.Objects.CurriculumVitae.Z + 0.001f);
                         string salary = character.Traits.RequiredSalary + " тыс.";
                         float dif = (Settings.AvarajeSalary[character.Traits.Grade] - character.Traits.RequiredSalary) / (Settings.AvarajeSalary[character.Traits.Grade] * 0.3f);
                         Color color = (dif < -0.5f) ? Color.Red : dif < 0.5f ? Color.Orange : Color.Green;
-                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], salary, new Vector2(725, 205), color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
+                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], salary, new Vector2(725, 205), color, 0, Vector2.Zero, 1f, SpriteEffects.None, ofScene.Objects.CurriculumVitae.Z + 0.001f);
 
                         text = "Профессионализм: " + (character.Traits.Professionality > 0 ? "+" : "") + character.Traits.Professionality;
                         color = character.Traits.Professionality < 0 ? Color.Red : character.Traits.Professionality == 0 ? Color.Orange : Color.Green;
-                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(525, 455), color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
+                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(525, 455), color, 0, Vector2.Zero, 1f, SpriteEffects.None, ofScene.Objects.CurriculumVitae.Z + 0.001f);
                         text = "Социанльные навыки: " + (character.Traits.SocialIntelligence > 0 ? "+" : "") + character.Traits.SocialIntelligence;
                         color = character.Traits.SocialIntelligence < 0 ? Color.Red : character.Traits.SocialIntelligence == 0 ? Color.Orange : Color.Green;
-                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(525, 490), color, 0, Vector2.Zero, 1f, SpriteEffects.None, 0.22f);
+                        spriteBatch.DrawString(fonts[FontsEnum.Pixel], text, new Vector2(525, 490), color, 0, Vector2.Zero, 1f, SpriteEffects.None, ofScene.Objects.CurriculumVitae.Z + 0.001f);
                     }
                     else
                     {
                         if (ofScene.Objects.Character.IsSitting())
-                            spriteBatch.Draw(sprites[SceneObjectSpriteEnum.CurriculumVitae], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.0216f);
+                            spriteBatch.Draw(sprites[SceneObjectSpriteEnum.CurriculumVitae], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.CurriculumVitae.Z + 0.016f);
                     }
                 }
                 void DrawDoor()
                 {
                     Door door = ofScene.Objects.Door;
                     if (door.State == DoorState.Closed)
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Door], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.006f);
+                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Door], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.Door.Z);
                     else
-                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.OpenedDoor], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.006f);
+                        spriteBatch.Draw(sprites[SceneObjectSpriteEnum.OpenedDoor], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.Door.Z);
                 }
                 void DrawSideChair()
                 {
-                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.SideChair], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.026f);
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.SideChair], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.SideChair.Z);
                 }
                 void DrawCharacter()
                 {
@@ -186,7 +185,7 @@ namespace JustHR.Classes.Basic
                 }
                 void DrawTable()
                 {
-                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Table], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.0215f);
+                    spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Table], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.Table.Z);
                 }
                 void DrawCat()
                 {
@@ -233,7 +232,7 @@ namespace JustHR.Classes.Basic
                 {
                     Garland garland = ofScene.Objects.Garland;
                     spriteTileMaps[GarlandAnimationEnum.BlinkAnimation].Draw(garland.Animator.GetFrame(), (texute) =>
-                        spriteBatch.Draw(texute, new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.004f));
+                        spriteBatch.Draw(texute, new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.Garland.Z));
                     garland.Animator.DoTick();
                 }
                 #endregion 

@@ -9,6 +9,8 @@ namespace JustHR.Classes.SceneObjects
 {
     class Cooler : ISceneObject
     {
+        public float Z { get; set; }
+        public Rectangle Collision { get; private set; }
         public int CofeeLvl { get; set; } = 100;
         private float coffeEffectiveness = 1;
         public float CoffeEffectiveness { get { return coffeEffectiveness; } set { coffeEffectiveness = MathHelper.Clamp(value, 0, 1); } }
