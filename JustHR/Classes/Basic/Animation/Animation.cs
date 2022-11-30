@@ -14,8 +14,10 @@ namespace JustHR.Classes.Basic.Animations
         public AnimationType Type { get; }
         public int TickNum { get; }
         public int Tick { get; set; }
-        public bool IsOver { get { return Tick >= TickNum; } }
-        
+        public bool IsOver { get { return Tick >= TickNum - 1; } }
+        public event Action OnBoundReached;
+        private bool wasOverReached;
+
         private readonly List<AnimationFrame> frames;
 
         public Animation(Enum name, AnimationType type, List<AnimationFrame> frames)
@@ -26,38 +28,36 @@ namespace JustHR.Classes.Basic.Animations
             TickNum = frames.Sum((frame) => frame.Length);
         }
 
-        public bool DoTick()
+        public void DoTick()
         {
-            Tick++;
+            if (Type == AnimationType.Default)
+                Tick += wasOverReached ? 0 : 1;
+            else if (Type == AnimationType.Cycleable)
+                Tick += wasOverReached ? -1 : 1;  //(int)Math.Round(Math.Abs((Tick+TickNum/2f)%TickNum-TickNum/2f)*2); функция зигзага /\/\/\
+            else
+                Tick++;
 
-            if (Tick >= TickNum)
+            if (Tick >= TickNum || Tick < 0)
             {
                 switch (Type)
                 {
                     case AnimationType.Default:
+                        wasOverReached = true;
                         Tick = TickNum - 1;
-                        return true;
+                        break;
                     case AnimationType.Repeatable:
-                        Tick = Tick % TickNum;
-                        return false;
-                    case AnimationType.EndStopable:
-                        Tick = Tick - 1;
-                        return false;
+                        Tick = 0;
+                        break;
+                    case AnimationType.Cycleable:
+                        wasOverReached = !wasOverReached;
+                        Tick = Tick + (wasOverReached ? -1 : 1);
+                        break;
                     default:
                         throw new NotImplementedException();
                 }
-            }
-            
-            return false;
-        }
 
-        public void DoRepetableTick()
-        {
-            Tick = (Tick + 1) % TickNum;
-        }
-        public void DoBoundedTick()
-        {
-            Tick = Math.Max(Tick + 1, TickNum);
+                OnBoundReached.Invoke();
+            }
         }
 
         public int GetFrame()
@@ -92,8 +92,11 @@ namespace JustHR.Classes.Basic.Animations
 
     enum AnimationType
     {
-        Default,     //после завершения останавливается и сигнализирует о завершении
-        Repeatable,  //после завершения начинает воспроизводиться назоно
-        EndStopable, //после завершения останавливатеся, но не сигнализирует о завершении
+        /// <summary>После завершения останавливается и 1 раз сигнализирует о завершении</summary>
+        Default,
+        /// <summary>После завершения начинает воспроизводиться назоно</summary>
+        Repeatable,  
+        /// <summary>После завершения начинает воспроизводиться наоборот</summary>
+        Cycleable,
     }
 }

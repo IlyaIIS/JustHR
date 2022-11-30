@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,41 +9,47 @@ namespace JustHR.Classes.Basic.Animations
     /// Класс, управляющий анимациями. Умеет переключайть анимации напрямую или через событие конца анимации. 
     /// </summary>
     /// <typeparam name="T">Enum, содержащий названия анимаций. Все анимации аниматора должны иметь имена из этого Enum'а.</typeparam>
-    class Animator<T> where T : Enum
+    class MoveAnimator<T> where T : Enum
     {
-        public Animation CurAnimation { get; private set; }
+        public MoveAnimation CurAnimation { get; private set; }
         public T AnimationName { get { return (T)CurAnimation.Name; } }
+        Vector2 curPos;
 
-        readonly Dictionary<T, Animation> animationsWithNames;
+        readonly Dictionary<T, MoveAnimation> animationsWithNames;
 
-        public delegate void AnimationOverHandler(T animationName);
+        public delegate void AnimationOverHandler(MoveAnimator<T> animator);
         /// <summary>Сюда навешивать методы, которые должны выполняться после конца анимации.</summary>
         public event AnimationOverHandler OnAnimationOver;
 
-        public Animator(List<Animation> animations, T startAnimationName)
+        public MoveAnimator(List<MoveAnimation> animations, T startAnimationName, Vector2 startPos)
         {
-            animationsWithNames = new Dictionary<T, Animation>();
-            foreach (Animation animation in animations)
+            animationsWithNames = new Dictionary<T, MoveAnimation>();
+            foreach (MoveAnimation animation in animations)
             {
                 if (animation.Name.GetType().Equals(typeof(T)))
                     animationsWithNames.Add((T)animation.Name, animation);
                 else
                     throw new ArithmeticException("Enum анимации должен быть тот же, что и enum аниматора.");
 
-                animation.OnBoundReached += () => OnAnimationOver?.Invoke((T)animation.Name);
+                animation.OnBoundReached += () => OnAnimationOver?.Invoke(this);
             }
 
             CurAnimation = animationsWithNames[startAnimationName];
+
+            curPos = startPos;
         }
 
         public void SetAnimation(T animationName)
         {
-            if (!AnimationName.Equals(animationName))
+            curPos += CurAnimation.GetPos();
+
+            if (!CurAnimation.Name.Equals(animationName))
             {
                 if (animationsWithNames.ContainsKey(animationName))
                 {
                     CurAnimation = animationsWithNames[animationName];
-                } else
+                }
+                else
                 {
                     throw new ArgumentException("Wrong animationName parameter");
                 }
@@ -51,9 +58,9 @@ namespace JustHR.Classes.Basic.Animations
             CurAnimation.Tick = 0;
         }
 
-        public int GetFrame()
+        public Vector2 GetPos()
         {
-            return CurAnimation.GetFrame();
+            return curPos + CurAnimation.GetPos();
         }
 
         public void DoTick()

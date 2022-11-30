@@ -7,56 +7,47 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Audio;
 using JustHR.Classes.Basic;
+using JustHR.Classes.Basic.Animations;
 
 namespace JustHR.Classes
 {
     class Character : ISceneObject
     {
-        private Vector2 originPos;
-        public Vector2 Pos { get; private set; }
+        public Vector2 Pos { get { return moveAnimator.GetPos(); } }
+        private MoveAnimator<CharacterMoveState> moveAnimator;
         public float Scale { get; private set; }
 
         public int ClothNum { get; }
 
         public TextPlace TextPlace { get; }
-        private CharacterStateEnum state;
-        public CharacterStateEnum State { get { return state; } set { state = value; tick = 0; } }
-        private int tick;
         private readonly OfficeScene scene;
 
         public CharacterTraits Traits { get; }
 
         public Dictionary<Enum, SoundEffectInstance> SoundEffects { get; }
 
+        private bool isAccepted;
 
-        public bool IsAnimationEnded()
-        {
-            if (State == CharacterStateEnum.Coming)
-                return tick > FIRST_LENGTH + SECOND_LENGTH + THIRD_LENGTH + 1;
-            else if (State == CharacterStateEnum.Rejected)
-                return tick > REJECTED_LENGTH;
-            else if (State == CharacterStateEnum.Accepted)
-                return tick > ACCEPTED_LENGTH;
-            else
-                throw new NotImplementedException("Незаданный тип");
-        }
         public bool IsSitting()
         {
-            return state == CharacterStateEnum.Coming && IsAnimationEnded();
+            return moveAnimator.AnimationName == CharacterMoveState.Sitting && moveAnimator.CurAnimation.IsOver;
         }
 
-        const int FIRST_LENGTH = 30;
-        const int SECOND_LENGTH = 60;
-        const int THIRD_LENGTH = 15;
+        public void Accept()
+        {
+            moveAnimator.SetAnimation(CharacterMoveState.StandUpping);
+            isAccepted = true;
+        }
 
-        const int REJECTED_LENGTH = 70;
-        const int ACCEPTED_LENGTH = 70;
+        public void Reject()
+        {
+            moveAnimator.SetAnimation(CharacterMoveState.StandUpping);
+            isAccepted = false;
+        }
 
         public Character(Vector2 pos, TextPlace textPlace, OfficeScene scene, int clothNum, CharacterTraits traits,
             Dictionary<Enum, SoundEffectInstance> soundEffects)
         {
-            Pos = pos;
-            originPos = pos;
             TextPlace = textPlace;
             ClothNum = clothNum;
 
@@ -67,91 +58,107 @@ namespace JustHR.Classes
             this.scene = scene; 
             foreach(string str in Traits.Speech)
                 if (str.Length > 300)
-                    throw new ArgumentException("Слишком длинная реплика");
+                    throw new ArgumentException("Слишком длинная реплика"); //todo: вынести проверку в момент загрузки реплик
+
+            moveAnimator = GetMoveAnimator(pos);
+        }
+
+        private MoveAnimator<CharacterMoveState> GetMoveAnimator(Vector2 pos)
+        {
+            var animations = new List<MoveAnimation>();
+            animations.Add(new MoveAnimation(CharacterMoveState.MovingToTable, AnimationType.Default, 30, (self) =>
+            {
+                Scale = 0.8f + (0.2f / self.TickNum) * self.Tick;
+                return new Vector2(0, - self.Tick + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)self.Tick / self.TickNum) * 2)));
+            }));
+            animations[^1].OnBoundReached += () =>
+            {
+                Door door = scene.Objects.Door;
+                door.State = DoorState.Closed;
+
+                SoundEffects[SoundsEnum.door_closing].Play();
+            };
+
+            animations.Add(new MoveAnimation(CharacterMoveState.MovingRightAlongTable, AnimationType.Default, 60, (self) =>
+            {
+                return new Vector2(((float)self.Tick / self.TickNum) * 385, 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)self.Tick / self.TickNum) * 4)));
+            }));
+
+
+            animations.Add(new MoveAnimation(CharacterMoveState.Sitting, AnimationType.Default, 15, (self) =>
+            {
+                return new Vector2(0, ((float)self.Tick / self.TickNum) * 30);
+            }));
+            animations[^1].OnBoundReached += () =>
+            {
+                TextPlace.BeginSpeech(Traits.Speech);
+            };
+
+            animations.Add(new MoveAnimation(CharacterMoveState.StandUpping, AnimationType.Default, 15, (self) =>
+            {
+                return new Vector2(0, -((float)self.Tick / self.TickNum) * 30);
+            }));
+
+
+            animations.Add(new MoveAnimation(CharacterMoveState.Rejected, AnimationType.Default, 70, (self) =>
+            {
+                return new Vector2(-((float)self.Tick / self.TickNum) * 650, 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)self.Tick / self.TickNum) * 4)));
+            }));
+            animations[^1].OnBoundReached += () =>
+            {
+                scene.CharacterExited();
+            };
+
+            animations.Add(new MoveAnimation(CharacterMoveState.Accepted, AnimationType.Default, 70, (self) =>
+            {
+                return new Vector2(((float)self.Tick / self.TickNum) * 750, 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)self.Tick / self.TickNum) * 6)));
+            }));
+            animations[^1].OnBoundReached += () =>
+            {
+                if (Traits.IsBoss)
+                    if (scene.Hour >= 18)
+                    {
+                        scene.Exit();
+                    }
+
+                scene.CharacterExited();
+            };
+
+            MoveAnimator<CharacterMoveState> moveAnimator = new MoveAnimator<CharacterMoveState>(animations, CharacterMoveState.MovingToTable, pos);
+
+            moveAnimator.OnAnimationOver += (animator) =>
+            {
+                switch (animator.CurAnimation.Name)
+                {
+                    case CharacterMoveState.MovingToTable:
+                        animator.SetAnimation(CharacterMoveState.MovingRightAlongTable);
+                        break;
+                    case CharacterMoveState.MovingRightAlongTable:
+                        animator.SetAnimation(CharacterMoveState.Sitting);
+                        break;
+                    case CharacterMoveState.Sitting:
+                        break;
+                    case CharacterMoveState.StandUpping:
+                        if (isAccepted)
+                            animator.SetAnimation(CharacterMoveState.Accepted);
+                        else
+                            animator.SetAnimation(CharacterMoveState.Rejected);
+                        break;
+                    case CharacterMoveState.Rejected:
+                        break;
+                    case CharacterMoveState.Accepted:
+                        break;
+                    default:
+                        break;
+                }
+            };
+
+            return moveAnimator;
         }
 
         public void DoTick()
         {
-            tick++;
-
-            if (State == CharacterStateEnum.Coming)
-            {
-                if (tick < FIRST_LENGTH)
-                {
-                    Scale = 0.8f + (0.2f / FIRST_LENGTH) * tick;
-                    Pos = new Vector2(originPos.X, originPos.Y - tick + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)tick / FIRST_LENGTH) * 2)));
-                }
-                else if (tick == FIRST_LENGTH)
-                {
-                    originPos = Pos;
-                    Door door = scene.Objects.Door;
-                    door.State = DoorState.Closed;
-
-                    SoundEffects[SoundsEnum.door_closing].Play();
-                }
-                else if (tick < FIRST_LENGTH + SECOND_LENGTH)
-                {
-                    int curTick = tick - FIRST_LENGTH;
-                    Pos = new Vector2(originPos.X + ((float)curTick / SECOND_LENGTH) * 385, originPos.Y + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)curTick / SECOND_LENGTH) * 4)));
-                }
-                else if (tick == FIRST_LENGTH + SECOND_LENGTH)
-                {
-                    originPos = Pos;
-                }
-                else if (tick <= FIRST_LENGTH + SECOND_LENGTH + THIRD_LENGTH)
-                {
-                    int curTick = tick - FIRST_LENGTH - SECOND_LENGTH;
-                    Pos = new Vector2(originPos.X, originPos.Y + ((float)curTick / THIRD_LENGTH) * 30);
-                }
-                else if (tick == FIRST_LENGTH + SECOND_LENGTH + THIRD_LENGTH + 1)
-                {
-                    originPos = Pos;
-                    TextPlace.BeginSpeech(Traits.Speech);
-                }
-            } else if (State == CharacterStateEnum.Rejected)
-            {
-                if(tick < THIRD_LENGTH)
-                {
-                    Pos = new Vector2(originPos.X, originPos.Y - ((float)tick / THIRD_LENGTH) * 30);
-                }
-                else if (tick == THIRD_LENGTH)
-                {
-                    originPos = Pos;
-                }
-                else if(tick  <= REJECTED_LENGTH + THIRD_LENGTH)
-                {
-                    int curTick = tick - THIRD_LENGTH;
-                    Pos = new Vector2(originPos.X - ((float)curTick / REJECTED_LENGTH) * 650, originPos.Y + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)curTick / REJECTED_LENGTH) * 4)));
-                }
-                else
-                {
-                    scene.CharacterExited();
-                }
-            }else if (State == CharacterStateEnum.Accepted) //Босс всегда уходит сюда
-            {
-                if (tick < THIRD_LENGTH)
-                {
-                    Pos = new Vector2(originPos.X, originPos.Y - ((float)tick / THIRD_LENGTH) * 30);
-                }
-                else if (tick == THIRD_LENGTH)
-                {
-                    originPos = Pos;
-                }
-                else if (tick <= ACCEPTED_LENGTH + THIRD_LENGTH)
-                {
-                    int curTick = (tick - THIRD_LENGTH);
-                    Pos = new Vector2(originPos.X + ((float)curTick / (ACCEPTED_LENGTH + THIRD_LENGTH)) * 750, originPos.Y + 10 * MathF.Abs(MathF.Sin(MathF.PI * ((float)curTick / (ACCEPTED_LENGTH + THIRD_LENGTH)) * 6)));
-                } else
-                {
-                    if (Traits.IsBoss)
-                        if (scene.Hour >= 18)
-                        {
-                            scene.Exit();
-                        }
-
-                    scene.CharacterExited();
-                }
-            }
+            moveAnimator.DoTick();
         }
     }
 
@@ -204,6 +211,16 @@ namespace JustHR.Classes
             RequiredSalary = requiredSalary;
             Speech = speech;
         }
+    }
+
+    enum CharacterMoveState
+    {
+        MovingToTable,
+        MovingRightAlongTable,
+        Sitting,
+        StandUpping,
+        Rejected,
+        Accepted
     }
 
     enum GradeEnum

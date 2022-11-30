@@ -60,7 +60,7 @@ namespace JustHR.Classes
                 Character character = this.Objects.Character;
                 if (character.IsSitting())
                 {
-                    character.State = CharacterStateEnum.Accepted;
+                    character.Accept();
 
                     Objects.CurriculumVitae.IsExpanded = false;
 
@@ -86,9 +86,9 @@ namespace JustHR.Classes
                 if (character.IsSitting())
                 {
                     if (!character.Traits.IsBoss)
-                        character.State = CharacterStateEnum.Rejected;
+                        character.Reject();
                     else
-                        character.State = CharacterStateEnum.Accepted;
+                        character.Accept();
 
                     Objects.CurriculumVitae.IsExpanded = false;
 
@@ -106,9 +106,9 @@ namespace JustHR.Classes
                 if (character.IsSitting())
                 {
                     if (!character.Traits.IsBoss)
-                        character.State = CharacterStateEnum.Rejected;
+                        character.Reject();
                     else
-                        character.State = CharacterStateEnum.Accepted;
+                        character.Accept();
 
                     Objects.CurriculumVitae.IsExpanded = false;
 
@@ -129,9 +129,9 @@ namespace JustHR.Classes
                 if (character.IsSitting())
                 {
                     if (!character.Traits.IsBoss)
-                        character.State = CharacterStateEnum.Rejected;
+                        character.Reject();
                     else
-                        character.State = CharacterStateEnum.Accepted;
+                        character.Accept();
 
                     Objects.CurriculumVitae.IsExpanded = false;
 
@@ -188,7 +188,7 @@ namespace JustHR.Classes
             Character character = Objects.Character;
             if (!character.Traits.IsBoss && character.IsSitting())
             {
-                character.State = CharacterStateEnum.Rejected;
+                character.Reject();
                 if (Objects.CurriculumVitae.IsExpanded)
                     Objects.CurriculumVitae.IsExpanded = false;
                 Menu.TextPlace.Clear();
@@ -656,7 +656,7 @@ namespace JustHR.Classes
             }
             else
             {
-                Objects.Character.State = CharacterStateEnum.Rejected;
+                Objects.Character.Reject();
                 BossState = BossState.ExitTrigger;
             }
         }
