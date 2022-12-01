@@ -7,7 +7,8 @@
 	#define PS_SHADERMODEL ps_4_0_level_9_1
 #endif
 
-extern float Distance = 1;
+extern float2 Distance;
+extern float4 WrapColor;
 
 extern Texture2D Character;
 
@@ -27,16 +28,16 @@ struct VertexShaderOutput
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-    float4 rColor = tex2D(CharacterSampler, input.TextureCoordinates.xy + float2(Distance, 0));
-    float4 tColor = tex2D(CharacterSampler, input.TextureCoordinates.xy - float2(0, Distance));
-    float4 lColor = tex2D(CharacterSampler, input.TextureCoordinates.xy - float2(Distance, 0));
-    float4 dColor = tex2D(CharacterSampler, input.TextureCoordinates.xy + float2(0, Distance));
+    float4 rColor = tex2D(CharacterSampler, input.TextureCoordinates.xy + float2(Distance.x, 0));
+    float4 tColor = tex2D(CharacterSampler, input.TextureCoordinates.xy - float2(0, Distance.y));
+    float4 lColor = tex2D(CharacterSampler, input.TextureCoordinates.xy - float2(Distance.x, 0));
+    float4 dColor = tex2D(CharacterSampler, input.TextureCoordinates.xy + float2(0, Distance.y));
     
     float4 color = tex2D(CharacterSampler, input.TextureCoordinates.xy);
     if (color.a == 0)
     {
         if (rColor.a != 0 || tColor.a != 0 || lColor.a != 0 || dColor.a != 0)
-            color = float4(250/255, 220/255, 120/255, 1);
+            color = float4(WrapColor.r, WrapColor.g, WrapColor.b, WrapColor.a);
     } else if (color.a < 0.95f)
     {
         if (rColor.a != 0 || tColor.a != 0 || lColor.a != 0 || dColor.a != 0)

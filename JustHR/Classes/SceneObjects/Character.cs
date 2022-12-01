@@ -14,7 +14,7 @@ namespace JustHR.Classes
     class Character : ISceneObject
     {
         public float Z { get; set; }
-        public Rectangle Collision { get; private set; }
+        public bool IsSelectable { get; } = false;
         public Vector2 Pos { get { return moveAnimator.GetPos(); } }
         private MoveAnimator<CharacterMoveState> moveAnimator;
         public float Scale { get; private set; }

@@ -7,30 +7,31 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace JustHR.Classes.SceneObjects
 {
-    class Cooler : ISceneObject
+    class Cooler : ISceneObject, IClickable
     {
         public float Z { get; set; }
-        public Rectangle Collision { get; private set; }
+        public Rectangle Collision { get; private set; } = new Rectangle(250, 215, 145, 175);
         public int CofeeLvl { get; set; } = 100;
         private float coffeEffectiveness = 1;
         public float CoffeEffectiveness { get { return coffeEffectiveness; } set { coffeEffectiveness = MathHelper.Clamp(value, 0, 1); } }
+        private Dictionary<Enum, SoundEffectInstance> soundEffects;
 
-        public Cooler(Controller controller, Dictionary<Enum, SoundEffectInstance> soundEffects)
+        public Cooler(Dictionary<Enum, SoundEffectInstance> soundEffects)
         {
-            controller.OnMouseButtonReleased += (key, x, y) =>
-            {
-                if (CofeeLvl > 0)
-                    if (key == MouseButton.LeftButton)
-                        if (x > 250 && y > 216 && x < 395 && y < 380)
-                        {
-                            soundEffects[SoundsEnum.drink_coffee].Stop();
-                            soundEffects[SoundsEnum.drink_coffee].Play();
+            this.soundEffects = soundEffects;
+        }
 
-                            CofeeLvl -= 10;
-                            Player.Mentality += (int)Math.Round(5 * CoffeEffectiveness);
-                            CoffeEffectiveness -= 0.3f;
-                        }
-            };
+        public void Click(OfficeScene scene)
+        {
+            if (CofeeLvl > 0)
+            {
+                soundEffects[SoundsEnum.drink_coffee].Stop();
+                soundEffects[SoundsEnum.drink_coffee].Play();
+
+                CofeeLvl -= 10;
+                Player.Mentality += (int)Math.Round(5 * CoffeEffectiveness);
+                CoffeEffectiveness -= 0.3f;
+            }
         }
     }
 }

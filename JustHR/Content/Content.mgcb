@@ -34,173 +34,185 @@
 /processorParam:TextureFormat=Compressed
 /build:small_pixel_font.spritefont
 
-#begin sounds/cat_hisses.mp3
+#begin Sounds/cat_hisses.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/cat_hisses.mp3
+/build:Sounds/cat_hisses.mp3
 
-#begin sounds/door_closing.mp3
+#begin Sounds/door_closing.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/door_closing.mp3
+/build:Sounds/door_closing.mp3
 
-#begin sounds/door_opening.mp3
+#begin Sounds/door_opening.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/door_opening.mp3
+/build:Sounds/door_opening.mp3
 
-#begin sounds/drink_coffee.mp3
+#begin Sounds/drink_coffee.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/drink_coffee.mp3
+/build:Sounds/drink_coffee.mp3
 
-#begin sounds/mur_long.mp3
+#begin Sounds/mur_long.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/mur_long.mp3
+/build:Sounds/mur_long.mp3
 
-#begin sounds/mur_long_with_a_pet_cat.mp3
+#begin Sounds/mur_long_with_a_pet_cat.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/mur_long_with_a_pet_cat.mp3
+/build:Sounds/mur_long_with_a_pet_cat.mp3
 
-#begin sounds/mur_short.mp3
+#begin Sounds/mur_short.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/mur_short.mp3
+/build:Sounds/mur_short.mp3
 
-#begin sounds/mur_super_short.mp3
+#begin Sounds/mur_super_short.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/mur_super_short.mp3
+/build:Sounds/mur_super_short.mp3
 
-#begin sounds/phone_btn_sound_1.mp3
+#begin Sounds/phone_btn_sound_1.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/phone_btn_sound_1.mp3
+/build:Sounds/phone_btn_sound_1.mp3
 
-#begin sounds/phone_btn_sound_2.mp3
+#begin Sounds/phone_btn_sound_2.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/phone_btn_sound_2.mp3
+/build:Sounds/phone_btn_sound_2.mp3
 
-#begin sounds/phone_btn_sound_3.mp3
+#begin Sounds/phone_btn_sound_3.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/phone_btn_sound_3.mp3
+/build:Sounds/phone_btn_sound_3.mp3
 
-#begin sounds/Rage.mp3
+#begin Sounds/Rage.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/Rage.mp3
+/build:Sounds/Rage.mp3
 
-#begin sounds/six_steps.mp3
+#begin Sounds/six_steps.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/six_steps.mp3
+/build:Sounds/six_steps.mp3
 
-#begin sounds/song_carol_of_the_bells.mp3
+#begin Sounds/song_carol_of_the_bells.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/song_carol_of_the_bells.mp3
+/build:Sounds/song_carol_of_the_bells.mp3
 
-#begin sounds/song_last_christmas_cover.mp3
+#begin Sounds/song_last_christmas_cover.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/song_last_christmas_cover.mp3
+/build:Sounds/song_last_christmas_cover.mp3
 
-#begin sounds/song_the_blizzard_is_ringing.mp3
+#begin Sounds/song_the_blizzard_is_ringing.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/song_the_blizzard_is_ringing.mp3
+/build:Sounds/song_the_blizzard_is_ringing.mp3
 
-#begin sounds/sound_ambient.mp3
+#begin Sounds/sound_ambient.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/sound_ambient.mp3
+/build:Sounds/sound_ambient.mp3
 
-#begin sounds/step_1.mp3
+#begin Sounds/step_1.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/step_1.mp3
+/build:Sounds/step_1.mp3
 
-#begin sounds/step_2.mp3
+#begin Sounds/step_2.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/step_2.mp3
+/build:Sounds/step_2.mp3
 
-#begin sounds/tap_a_clock.mp3
+#begin Sounds/tap_a_clock.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/tap_a_clock.mp3
+/build:Sounds/tap_a_clock.mp3
 
-#begin sounds/tick_1.mp3
+#begin Sounds/tick_1.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/tick_1.mp3
+/build:Sounds/tick_1.mp3
 
-#begin sounds/tick_2.mp3
+#begin Sounds/tick_2.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/tick_2.mp3
+/build:Sounds/tick_2.mp3
 
-#begin sounds/transition_sound.mp3
+#begin Sounds/transition_sound.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/transition_sound.mp3
+/build:Sounds/transition_sound.mp3
 
-#begin sounds/vc_closing.mp3
+#begin Sounds/vc_closing.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/vc_closing.mp3
+/build:Sounds/vc_closing.mp3
 
-#begin sounds/vc_opening.mp3
+#begin Sounds/vc_opening.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/vc_opening.mp3
+/build:Sounds/vc_opening.mp3
 
-#begin sounds/voice_long.mp3
+#begin Sounds/voice_long.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/voice_long.mp3
+/build:Sounds/voice_long.mp3
 
-#begin sounds/voice_long_raised_tone.mp3
+#begin Sounds/voice_long_raised_tone.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/voice_long_raised_tone.mp3
+/build:Sounds/voice_long_raised_tone.mp3
 
-#begin sounds/voice_short.mp3
+#begin Sounds/voice_short (mp3cut.net) (1).mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sounds/voice_short.mp3
+/build:Sounds/voice_short (mp3cut.net) (1).mp3
+
+#begin Sounds/voice_short.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/voice_short.mp3
+
+#begin Sounds/voice_short_old.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/voice_short_old.mp3
 
 #begin Sprites/accept_button.png
 /importer:TextureImporter
@@ -741,6 +753,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Sprites/dude.png
+
+#begin Sprites/exit.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/exit.png
 
 #begin Sprites/eyes.png
 /importer:TextureImporter

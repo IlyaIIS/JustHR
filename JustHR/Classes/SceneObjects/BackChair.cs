@@ -8,6 +8,5 @@ namespace JustHR.Classes.SceneObjects
     class BackChair : ISceneObject
     {
         public float Z { get; set; }
-        public Rectangle Collision { get; private set; }
     }
 }

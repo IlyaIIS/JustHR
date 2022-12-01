@@ -9,7 +9,6 @@ namespace JustHR.Classes.SceneObjects
     class ChristmasTree : ISceneObject
     {
         public float Z { get; set; }
-        public Rectangle Collision { get; private set; }
         public Animator<TreeAnimationEnum> Animator { get; }
         public ChristmasTree()
         {

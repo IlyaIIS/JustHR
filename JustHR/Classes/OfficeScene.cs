@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework.Audio;
+using System.Linq;
 
 namespace JustHR.Classes
 {
@@ -30,24 +31,27 @@ namespace JustHR.Classes
 
         public List<Character> RecallCharacters { get; } = new List<Character>();
 
+        public ISceneObject SelectedObject { get; set; }
+
         public OfficeScene(int day, Controller controller, Dictionary<Enum, SoundEffectInstance> soundEffects)
         {
             SoundEffects = soundEffects;
 
             Objects = new OfficeSceneObjectsHolder
             {
-                CurriculumVitae = new CurriculumVitae(this, controller, SoundEffects) { Z = 0.2f },
-                Whiteboard = new Whiteboard() { Z = 0.1f },
-                SideChair = new SideChair() { Z = 0.026f },
-                ChristmasTree = new ChristmasTree() { Z = 0.025f },
-                Table = new Table() { Z = 0.0215f },
-                BackChair = new BackChair() { Z = 0.017f },
-                Cooler = new Cooler(controller, SoundEffects) { Z = 0.015f },
-                Door = new Door(this, controller) { Z = 0.006f },
-                Garland = new Garland() { Z = 0.004f },
-                Clock = new Clock(this, controller, SoundEffects) { Z = 0.004f },
-                Calendar = new Calendar() { Z = 0.002f },
-                Cat = new Cat(controller, SoundEffects) { Z = 0f },
+                CurriculumVitae = new CurriculumVitae(this, controller, SoundEffects) { Z = 0.8f }, //0.8f;0.99f
+                Table = new Table() { Z = 0.7f },
+                Cat = new Cat(SoundEffects) { }, //0.9f;0.31f;0.51f;
+                SideChair = new SideChair() { Z = 0.5f },
+                ChristmasTree = new ChristmasTree() { Z = 0.4f },
+                BackChair = new BackChair() { Z = 0.3f },
+                Cooler = new Cooler(SoundEffects) { Z = 0.3f },
+                Garland = new Garland() { Z = 0.3f },
+                Whiteboard = new Whiteboard() { Z = 0.2f },
+                Clock = new Clock(SoundEffects) { Z = 0.2f },
+                Calendar = new Calendar() { Z = 0.2f },
+                Exit = new Exit() { Z = 0.2f },
+                Door = new Door(this, controller) { Z = 0.1f },
             };
 
             Day = day;
@@ -55,7 +59,7 @@ namespace JustHR.Classes
             buttons.Add(new Button(ButtonEnum.AcceptButton, new Vector2(35, 475), new Vector2(245, 50), controller, () =>
             {
                 SoundEffects[SoundsEnum.phone_btn_sound_2].Play();
-
+                
                 Character character = this.Objects.Character;
                 if (character.IsSitting())
                 {
@@ -144,12 +148,47 @@ namespace JustHR.Classes
                 }
             }));
             Phone phone = new Phone(buttons);
-
             TextPlace textPlace = new TextPlace(controller);
             Menu = new Menu(phone, textPlace);
 
-            Random rnd = new Random();
+            GenerateRequirements();
 
+            GenerateBoss();
+
+            controller.OnMouseMoving += (lastPos, newPos) =>
+            {
+                List<ISceneObject> selectedObjects = new List<ISceneObject>();
+                foreach(ISceneObject obj in Objects.ObjectsCollection)
+                    if (obj is IClickable clObj)
+                        if (clObj.Collision.Contains(newPos))
+                            selectedObjects.Add(obj);
+
+                if (selectedObjects.Count > 0)
+                {
+                    SelectedObject = selectedObjects[0];
+                    foreach (ISceneObject obj in selectedObjects)
+                        if (obj.Z > SelectedObject.Z)
+                            SelectedObject = obj;
+                }
+                else
+                {
+                    SelectedObject = null;
+                }
+            };
+
+            controller.OnMouseButtonReleased += (button, x, y) =>
+            {
+                if (button == MouseButton.LeftButton)
+                    foreach (ISceneObject obj in Objects.ObjectsCollection)
+                        if (obj is IClickable clObj)
+                            if (clObj.Collision.Contains(x, y))
+                                clObj.Click(this);
+            };
+        }
+
+        private void GenerateRequirements()
+        {
+            Random rnd = new Random();
             List<int> randomNums = new List<int>();
             do
             {
@@ -158,7 +197,7 @@ namespace JustHR.Classes
                     randomNums.Add(rndNum);
             } while (randomNums.Count < 3);
 
-            int dayDif = (day - 27);
+            int dayDif = (Day - 27);
             Requirements.Add((ProfessionEnum)randomNums[0], 2 + dayDif + rnd.Next(1));
             Requirements.Add((ProfessionEnum)randomNums[1], 2 + rnd.Next((dayDif / 2), dayDif));
             Requirements.Add((ProfessionEnum)randomNums[2], 1 + rnd.Next(dayDif / 2));
@@ -166,8 +205,6 @@ namespace JustHR.Classes
             HairedRatio.Add((ProfessionEnum)randomNums[0], 0);
             HairedRatio.Add((ProfessionEnum)randomNums[1], 0);
             HairedRatio.Add((ProfessionEnum)randomNums[2], 0);
-
-            GenerateBoss();
         }
 
         public void NextHour()
@@ -646,7 +683,7 @@ namespace JustHR.Classes
             }
         }
 
-        public void TriggerBoosByExit()
+        public void TriggerBossByExit()
         {
             if (Objects.Character.Traits.IsBoss)
             {
@@ -678,6 +715,8 @@ namespace JustHR.Classes
             internal set { dictionary.Add(value.GetType(), value); } }
         public Door Door { get { return (Door)dictionary[typeof(Door)]; } 
             internal set { dictionary.Add(value.GetType(), value); } }
+        public Exit Exit { get { return (Exit)dictionary[typeof(Exit)]; } 
+            internal set { dictionary.Add(value.GetType(), value); } }
         public ChristmasTree ChristmasTree { get { return (ChristmasTree)dictionary[typeof(ChristmasTree)]; } 
             internal set { dictionary.Add(value.GetType(), value); } }
         public Calendar Calendar { get { return (Calendar)dictionary[typeof(Calendar)]; } 
@@ -691,7 +730,7 @@ namespace JustHR.Classes
         public SideChair SideChair { get { return (SideChair)dictionary[typeof(SideChair)]; } 
             internal set { dictionary.Add(value.GetType(), value); } }
         public Character Character { get { return (Character)dictionary[typeof(Character)]; } 
-            internal set { dictionary.Add(value.GetType(), value); } }
+            internal set { if (dictionary.ContainsKey(value.GetType())) dictionary[value.GetType()] = value; else dictionary.Add(value.GetType(), value); } }
         public Table Table { get { return (Table)dictionary[typeof(Table)]; } 
             internal set { dictionary.Add(value.GetType(), value); } }
         public CurriculumVitae CurriculumVitae { get { return (CurriculumVitae)dictionary[typeof(CurriculumVitae)]; } 

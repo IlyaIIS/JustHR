@@ -9,7 +9,6 @@ namespace JustHR.Classes.SceneObjects
     class Garland : ISceneObject
     {
         public float Z { get; set; }
-        public Rectangle Collision { get; private set; }
         public Animator<GarlandAnimationEnum> Animator { get; }
         public Garland()
         {

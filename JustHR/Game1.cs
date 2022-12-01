@@ -18,6 +18,7 @@ namespace JustHR
         Effect waveShader;
         Effect wrapShader;
         RenderTarget2D canvas;
+        RenderTarget2D wrapCanvas;
 
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
@@ -85,6 +86,7 @@ namespace JustHR
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             canvas = new RenderTarget2D(GraphicsDevice, Settings.WindowWidth, Settings.WindowHeight);
+            wrapCanvas = new RenderTarget2D(GraphicsDevice, Settings.WindowWidth, Settings.WindowHeight);
 
             #region sound load
             SoundEffect.MasterVolume = Settings.GlobalVolume; //volume
@@ -160,6 +162,7 @@ namespace JustHR
             sprites.Add(SceneObjectSpriteEnum.ClockArrow, Content.Load<Texture2D>("sprites/clock_arrow"));
             sprites.Add(SceneObjectSpriteEnum.Cooler, Content.Load<Texture2D>("Sprites/cooler"));
             sprites.Add(SceneObjectSpriteEnum.Door, Content.Load<Texture2D>("Sprites/door"));
+            sprites.Add(SceneObjectSpriteEnum.Exit, Content.Load<Texture2D>("Sprites/exit"));
             sprites.Add(SceneObjectSpriteEnum.OpenedDoor, Content.Load<Texture2D>("Sprites/opened_door"));
             sprites.Add(SceneObjectSpriteEnum.SideChair, Content.Load<Texture2D>("Sprites/side_chair"));
             sprites.Add(SceneObjectSpriteEnum.Table, Content.Load<Texture2D>("Sprites/desk"));
@@ -294,19 +297,35 @@ namespace JustHR
 
         protected override void Draw(GameTime gameTime)
         {
-            waveShader.Parameters["ElapsedTime"].SetValue((float)gameTime.TotalGameTime.TotalSeconds*1.5f);
+            GraphicsDevice.SetRenderTarget(wrapCanvas);
+            GraphicsDevice.Clear(Color.Transparent);
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+
+            if (currentScene is OfficeScene ofScene)
+                drawer.DrawSelectedObject(ofScene);
+
+            spriteBatch.End();
+
+
             float elapsedWeight = 0;
             if (currentScene is OfficeScene)
-            {
-                elapsedWeight = 1 - MathHelper.Clamp(Player.Mentality / 100f, 0, 0.25f)/0.25f;
-            }
-
+                elapsedWeight = 1 - MathHelper.Clamp(Player.Mentality / 100f, 0, 0.25f) / 0.25f;
+            waveShader.Parameters["ElapsedTime"].SetValue((float)gameTime.TotalGameTime.TotalSeconds * 1.5f);
             waveShader.Parameters["ElapsedWeight"].SetValue(elapsedWeight);
             GraphicsDevice.SetRenderTarget(canvas);
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
 
             drawer.DrawScene(currentScene);
+
+            spriteBatch.End();
+
+
+            wrapShader.Parameters["Distance"].SetValue(new Vector2(1f / 300, 1f / 300));
+            wrapShader.Parameters["WrapColor"].SetValue(new Vector4(150 / 255f, 220 / 255f, 120 / 255f, 1f));
+            spriteBatch.Begin(effect: wrapShader, samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack, blendState: BlendState.NonPremultiplied);
+
+            spriteBatch.Draw(wrapCanvas, new Vector2(0, 0), Color.White);
 
             spriteBatch.End();
 
