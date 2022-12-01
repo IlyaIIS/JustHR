@@ -5,8 +5,14 @@ using System.Text;
 
 namespace JustHR.Classes.SceneObjects
 {
-    class Calendar : ISceneObject
+    interface ISceneObject
     {
         public float Z { get; set; }
+    }
+
+    interface IClickable
+    {
+        public Rectangle Collision { get; }
+        public void Click(OfficeScene scene);
     }
 }

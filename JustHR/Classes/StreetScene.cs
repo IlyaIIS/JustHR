@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework;
 using JustHR.Classes.Basic;
+using JustHR.Classes.SceneObjects;
 
 namespace JustHR.Classes
 {

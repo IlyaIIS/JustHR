@@ -16,7 +16,9 @@ namespace JustHR
     public class Game1 : Game
     {
         Effect waveShader;
+        Effect wrapShader;
         RenderTarget2D canvas;
+        RenderTarget2D wrapCanvas;
 
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
@@ -84,37 +86,38 @@ namespace JustHR
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             canvas = new RenderTarget2D(GraphicsDevice, Settings.WindowWidth, Settings.WindowHeight);
+            wrapCanvas = new RenderTarget2D(GraphicsDevice, Settings.WindowWidth, Settings.WindowHeight);
 
             #region sound load
             SoundEffect.MasterVolume = Settings.GlobalVolume; //volume
-            soundEffects.Add(SoundsEnum.door_closing, Content.Load<SoundEffect>("sounds/door_closing").CreateInstance());
-            soundEffects.Add(SoundsEnum.door_opening, Content.Load<SoundEffect>("sounds/door_opening").CreateInstance());
-            soundEffects.Add(SoundsEnum.drink_coffee, Content.Load<SoundEffect>("sounds/drink_coffee").CreateInstance());
-            soundEffects.Add(SoundsEnum.mur_long, Content.Load<SoundEffect>("sounds/mur_long").CreateInstance());
-            soundEffects.Add(SoundsEnum.mur_long_with_a_pet_cat, Content.Load<SoundEffect>("sounds/mur_long_with_a_pet_cat").CreateInstance());
-            soundEffects.Add(SoundsEnum.mur_short, Content.Load<SoundEffect>("sounds/mur_short").CreateInstance());
-            soundEffects.Add(SoundsEnum.mur_super_short, Content.Load<SoundEffect>("sounds/mur_super_short").CreateInstance());
-            soundEffects.Add(SoundsEnum.phone_btn_sound_1, Content.Load<SoundEffect>("sounds/phone_btn_sound_1").CreateInstance());
-            soundEffects.Add(SoundsEnum.phone_btn_sound_2, Content.Load<SoundEffect>("sounds/phone_btn_sound_2").CreateInstance());
-            soundEffects.Add(SoundsEnum.phone_btn_sound_3, Content.Load<SoundEffect>("sounds/phone_btn_sound_3").CreateInstance());
-            soundEffects.Add(SoundsEnum.song_carol_of_the_bells, Content.Load<SoundEffect>("sounds/song_carol_of_the_bells").CreateInstance());
-            soundEffects.Add(SoundsEnum.song_last_christmas_cover, Content.Load<SoundEffect>("sounds/song_last_christmas_cover").CreateInstance());
-            soundEffects.Add(SoundsEnum.song_the_blizzard_is_ringing, Content.Load<SoundEffect>("sounds/song_the_blizzard_is_ringing").CreateInstance());
-            soundEffects.Add(SoundsEnum.sound_ambient, Content.Load<SoundEffect>("sounds/sound_ambient").CreateInstance());
-            soundEffects.Add(SoundsEnum.vc_closing, Content.Load<SoundEffect>("sounds/vc_closing").CreateInstance());
-            soundEffects.Add(SoundsEnum.vc_opening, Content.Load<SoundEffect>("sounds/vc_opening").CreateInstance());
-            soundEffects.Add(SoundsEnum.voice_long, Content.Load<SoundEffect>("sounds/voice_long").CreateInstance());
-            soundEffects.Add(SoundsEnum.voice_long_raised_tone, Content.Load<SoundEffect>("sounds/voice_long_raised_tone").CreateInstance());
-            soundEffects.Add(SoundsEnum.voice_short, Content.Load<SoundEffect>("sounds/voice_short").CreateInstance());
-            soundEffects.Add(SoundsEnum.cat_hisses, Content.Load<SoundEffect>("sounds/cat_hisses").CreateInstance());
-            soundEffects.Add(SoundsEnum.six_steps, Content.Load<SoundEffect>("sounds/six_steps").CreateInstance());
-            soundEffects.Add(SoundsEnum.step_1, Content.Load<SoundEffect>("sounds/step_1").CreateInstance());
-            soundEffects.Add(SoundsEnum.step_2, Content.Load<SoundEffect>("sounds/step_2").CreateInstance());
-            soundEffects.Add(SoundsEnum.tap_a_clock, Content.Load<SoundEffect>("sounds/tap_a_clock").CreateInstance());
-            soundEffects.Add(SoundsEnum.tick_1, Content.Load<SoundEffect>("sounds/tick_1").CreateInstance());
-            soundEffects.Add(SoundsEnum.tick_2, Content.Load<SoundEffect>("sounds/tick_2").CreateInstance());
-            soundEffects.Add(SoundsEnum.transition_sound, Content.Load<SoundEffect>("sounds/transition_sound").CreateInstance());
-            soundEffects.Add(SoundsEnum.rage, Content.Load<SoundEffect>("sounds/Rage").CreateInstance());
+            soundEffects.Add(SoundsEnum.door_closing, Content.Load<SoundEffect>("Sounds/door_closing").CreateInstance());
+            soundEffects.Add(SoundsEnum.door_opening, Content.Load<SoundEffect>("Sounds/door_opening").CreateInstance());
+            soundEffects.Add(SoundsEnum.drink_coffee, Content.Load<SoundEffect>("Sounds/drink_coffee").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_long, Content.Load<SoundEffect>("Sounds/mur_long").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_long_with_a_pet_cat, Content.Load<SoundEffect>("Sounds/mur_long_with_a_pet_cat").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_short, Content.Load<SoundEffect>("Sounds/mur_short").CreateInstance());
+            soundEffects.Add(SoundsEnum.mur_super_short, Content.Load<SoundEffect>("Sounds/mur_super_short").CreateInstance());
+            soundEffects.Add(SoundsEnum.phone_btn_sound_1, Content.Load<SoundEffect>("Sounds/phone_btn_sound_1").CreateInstance());
+            soundEffects.Add(SoundsEnum.phone_btn_sound_2, Content.Load<SoundEffect>("Sounds/phone_btn_sound_2").CreateInstance());
+            soundEffects.Add(SoundsEnum.phone_btn_sound_3, Content.Load<SoundEffect>("Sounds/phone_btn_sound_3").CreateInstance());
+            soundEffects.Add(SoundsEnum.song_carol_of_the_bells, Content.Load<SoundEffect>("Sounds/song_carol_of_the_bells").CreateInstance());
+            soundEffects.Add(SoundsEnum.song_last_christmas_cover, Content.Load<SoundEffect>("Sounds/song_last_christmas_cover").CreateInstance());
+            soundEffects.Add(SoundsEnum.song_the_blizzard_is_ringing, Content.Load<SoundEffect>("Sounds/song_the_blizzard_is_ringing").CreateInstance());
+            soundEffects.Add(SoundsEnum.sound_ambient, Content.Load<SoundEffect>("Sounds/sound_ambient").CreateInstance());
+            soundEffects.Add(SoundsEnum.vc_closing, Content.Load<SoundEffect>("Sounds/vc_closing").CreateInstance());
+            soundEffects.Add(SoundsEnum.vc_opening, Content.Load<SoundEffect>("Sounds/vc_opening").CreateInstance());
+            soundEffects.Add(SoundsEnum.voice_long, Content.Load<SoundEffect>("Sounds/voice_long").CreateInstance());
+            soundEffects.Add(SoundsEnum.voice_long_raised_tone, Content.Load<SoundEffect>("Sounds/voice_long_raised_tone").CreateInstance());
+            soundEffects.Add(SoundsEnum.voice_short, Content.Load<SoundEffect>("Sounds/voice_short").CreateInstance());
+            soundEffects.Add(SoundsEnum.cat_hisses, Content.Load<SoundEffect>("Sounds/cat_hisses").CreateInstance());
+            soundEffects.Add(SoundsEnum.six_steps, Content.Load<SoundEffect>("Sounds/six_steps").CreateInstance());
+            soundEffects.Add(SoundsEnum.step_1, Content.Load<SoundEffect>("Sounds/step_1").CreateInstance());
+            soundEffects.Add(SoundsEnum.step_2, Content.Load<SoundEffect>("Sounds/step_2").CreateInstance());
+            soundEffects.Add(SoundsEnum.tap_a_clock, Content.Load<SoundEffect>("Sounds/tap_a_clock").CreateInstance());
+            soundEffects.Add(SoundsEnum.tick_1, Content.Load<SoundEffect>("Sounds/tick_1").CreateInstance());
+            soundEffects.Add(SoundsEnum.tick_2, Content.Load<SoundEffect>("Sounds/tick_2").CreateInstance());
+            soundEffects.Add(SoundsEnum.transition_sound, Content.Load<SoundEffect>("Sounds/transition_sound").CreateInstance());
+            soundEffects.Add(SoundsEnum.rage, Content.Load<SoundEffect>("Sounds/Rage").CreateInstance());
 
             foreach (KeyValuePair<Enum, SoundEffectInstance> entry in soundEffects)
             {
@@ -130,6 +133,7 @@ namespace JustHR
             fonts.Add(FontsEnum.Pixel, Content.Load<SpriteFont>("pixel_font"));
 
             waveShader = Content.Load<Effect>("WaveShader");
+            wrapShader = Content.Load<Effect>("WrapShader");
 
             #region sprite load
             var sprites = new Dictionary<Enum, Texture2D>();
@@ -158,6 +162,7 @@ namespace JustHR
             sprites.Add(SceneObjectSpriteEnum.ClockArrow, Content.Load<Texture2D>("sprites/clock_arrow"));
             sprites.Add(SceneObjectSpriteEnum.Cooler, Content.Load<Texture2D>("Sprites/cooler"));
             sprites.Add(SceneObjectSpriteEnum.Door, Content.Load<Texture2D>("Sprites/door"));
+            sprites.Add(SceneObjectSpriteEnum.Exit, Content.Load<Texture2D>("Sprites/exit"));
             sprites.Add(SceneObjectSpriteEnum.OpenedDoor, Content.Load<Texture2D>("Sprites/opened_door"));
             sprites.Add(SceneObjectSpriteEnum.SideChair, Content.Load<Texture2D>("Sprites/side_chair"));
             sprites.Add(SceneObjectSpriteEnum.Table, Content.Load<Texture2D>("Sprites/desk"));
@@ -292,19 +297,35 @@ namespace JustHR
 
         protected override void Draw(GameTime gameTime)
         {
-            waveShader.Parameters["ElapsedTime"].SetValue((float)gameTime.TotalGameTime.TotalSeconds*1.5f);
+            GraphicsDevice.SetRenderTarget(wrapCanvas);
+            GraphicsDevice.Clear(Color.Transparent);
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+
+            if (currentScene is OfficeScene ofScene)
+                drawer.DrawSelectedObject(ofScene);
+
+            spriteBatch.End();
+
+
             float elapsedWeight = 0;
             if (currentScene is OfficeScene)
-            {
-                elapsedWeight = 1 - MathHelper.Clamp(Player.Mentality / 100f, 0, 0.25f)/0.25f;
-            }
-
+                elapsedWeight = 1 - MathHelper.Clamp(Player.Mentality / 100f, 0, 0.25f) / 0.25f;
+            waveShader.Parameters["ElapsedTime"].SetValue((float)gameTime.TotalGameTime.TotalSeconds * 1.5f);
             waveShader.Parameters["ElapsedWeight"].SetValue(elapsedWeight);
             GraphicsDevice.SetRenderTarget(canvas);
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
 
             drawer.DrawScene(currentScene);
+
+            spriteBatch.End();
+
+
+            wrapShader.Parameters["Distance"].SetValue(new Vector2(1f / 300, 1f / 300));
+            wrapShader.Parameters["WrapColor"].SetValue(new Vector4(150 / 255f, 220 / 255f, 120 / 255f, 1f));
+            spriteBatch.Begin(effect: wrapShader, samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack, blendState: BlendState.NonPremultiplied);
+
+            spriteBatch.Draw(wrapCanvas, new Vector2(0, 0), Color.White);
 
             spriteBatch.End();
 

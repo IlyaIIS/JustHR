@@ -39,10 +39,14 @@ namespace JustHR.Classes.Basic
         public event KeyClickHandler OnKeyReleased;
         public delegate void MouseScrollHandler(int scroll);
         public event MouseScrollHandler OnMouseScroll;
-        public delegate void MouseButtonHandler(MouseButton button, float x, float y);
+        public delegate void MouseButtonHandler(MouseButton button, int x, int y);
         public event MouseButtonHandler OnMouseButtonPressed;
         public event MouseButtonHandler OnMouseButtonPressing;
         public event MouseButtonHandler OnMouseButtonReleased;
+        public delegate void MouseMoveHandler(Point lastPos, Point newPos);
+        public event MouseMoveHandler OnMouseMoving;
+
+        private Point lastMousePos;
 
         /// <summary>Активирует заданные контроллеру действия, если произошли соответствующие им события (например нажатие кнопки).</summary>
         public void TriggerControlEvents()
@@ -57,6 +61,7 @@ namespace JustHR.Classes.Basic
         private void TriggerEvents(KeyboardState keyState, MouseState mouseState)
         {
             TriggerKeyEvents();
+            TriggetMouseMoveEvent();
             TriggerMouseButtonEvents();
             TriggerMouseScrollEvents();
 
@@ -124,23 +129,16 @@ namespace JustHR.Classes.Basic
                     //OnMouseScroll(-1);
                 preMouseScroll = mouseState.ScrollWheelValue;
             }
+            void TriggetMouseMoveEvent()
+            {
+                if (!mouseState.Position.Equals(lastMousePos))
+                {
+                    OnMouseMoving?.Invoke(lastMousePos, mouseState.Position);
+                    lastMousePos = mouseState.Position;
+                }
+            }
         }
 
-        /*static private void CheckMapMode()
-        {
-            int local = Settings.MapMode;
-            if (key.IsKeyDown(Keys.Space)) Settings.TimeSpeed = 0;
-            if (key.IsKeyDown(Keys.D1)) Settings.TimeSpeed = 1;
-            if (key.IsKeyDown(Keys.D2)) Settings.TimeSpeed = 2;
-            if (key.IsKeyDown(Keys.D3)) Settings.TimeSpeed = 3;
-            if (key.IsKeyDown(Keys.D4)) Settings.TimeSpeed = 4;
-            if (key.IsKeyDown(Keys.D5)) Settings.TimeSpeed = 5;
-
-            if (local != Settings.MapMode)
-            {
-                //Map.SetTileColor();
-            }
-        }*/
 
         void DoActionIfKeyReleased(Keys key, Action action, KeyboardState keyState)
         {

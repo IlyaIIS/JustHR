@@ -1,4 +1,5 @@
 ﻿using JustHR.Classes.Basic.Animations;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +8,7 @@ namespace JustHR.Classes.SceneObjects
 {
     class ChristmasTree : ISceneObject
     {
+        public float Z { get; set; }
         public Animator<TreeAnimationEnum> Animator { get; }
         public ChristmasTree()
         {
