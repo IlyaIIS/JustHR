@@ -26,6 +26,7 @@ namespace JustHR
         private Drawer drawer;
         private Controller controller;
         private IScene currentScene;
+        private SoundsEnum currentSong;
         private long ticksSinceSceneStart;
         private int day;
         private Dictionary<Enum, SoundEffectInstance> soundEffects = new Dictionary<Enum, SoundEffectInstance>();
@@ -59,7 +60,7 @@ namespace JustHR
             Player.Unity = 60;
             Player.Mentality = 60;
             Player.BossSatisfaction = 60;
-
+            
             var buttons = new List<Button>();
             buttons.Add(new Button(ButtonEnum.StartButton, new Vector2(50, 450), new Vector2(220, 210), controller, () => {
                 soundEffects[SoundsEnum.phone_btn_sound_2].Play();
@@ -71,7 +72,7 @@ namespace JustHR
             Phone phone = new Phone(buttons);
 
             Menu menu = new Menu(phone, null);
-
+            
             currentScene = new StreetScene(menu, soundEffects);
         }
 
@@ -125,6 +126,9 @@ namespace JustHR
                 if ((SoundsEnum)entry.Key == SoundsEnum.song_the_blizzard_is_ringing)
                     entry.Value.Volume = 0.7f;
             }
+
+            currentSong = SoundsEnum.sound_ambient;
+            soundEffects[currentSong].Play();
             #endregion
 
             //load fonts
@@ -273,26 +277,64 @@ namespace JustHR
                         soundEffects[SoundsEnum.sound_ambient].Play();
                     }
                 }
-
-                if (Player.Mentality < 25 && soundEffects[SoundsEnum.rage].State == SoundState.Stopped)
-                {
-                    soundEffects[SoundsEnum.song_carol_of_the_bells].Stop();
-                    soundEffects[SoundsEnum.song_last_christmas_cover].Stop();
-                    soundEffects[SoundsEnum.song_the_blizzard_is_ringing].Stop();
-                    soundEffects[SoundsEnum.sound_ambient].Stop();
-                    soundEffects[SoundsEnum.rage].Play();
-                }
-                if (Player.Mentality > 25 && soundEffects[SoundsEnum.rage].State == SoundState.Playing)
-                {
-                    soundEffects[SoundsEnum.rage].Stop();
-                }
             }
             else
             {
                 (currentScene as StreetScene).DoTick();
             }
 
+            MenageMusic();
+
             base.Update(gameTime);
+        }
+
+        private void MenageMusic()
+        {
+            if (currentScene is OfficeScene)
+            {
+                if (Player.Mentality < 25 && soundEffects[SoundsEnum.rage].State == SoundState.Stopped)
+                {
+                    soundEffects[currentSong].Pause();
+                    soundEffects[SoundsEnum.rage].Play();
+                }
+                if (Player.Mentality >= 25 && soundEffects[SoundsEnum.rage].State == SoundState.Playing)
+                {
+                    soundEffects[SoundsEnum.rage].Stop();
+                    soundEffects[currentSong].Resume();
+                }
+
+                if (currentSong == SoundsEnum.sound_ambient)
+                {
+                    soundEffects[currentSong].Stop();
+                    currentSong = SoundsEnum.song_last_christmas_cover;
+                    soundEffects[currentSong].Play();
+                }
+
+                if (soundEffects[currentSong].State == SoundState.Stopped && Player.Mentality >= 25)
+                {
+                    if (currentSong == SoundsEnum.song_last_christmas_cover)
+                        currentSong = SoundsEnum.song_the_blizzard_is_ringing;
+                    else if (currentSong == SoundsEnum.song_the_blizzard_is_ringing)
+                        currentSong = SoundsEnum.song_last_christmas_cover;
+                    else
+                    {
+                        //
+                    }
+                    soundEffects[currentSong].Play();
+                }
+            }
+            else
+            {
+                if (currentSong != SoundsEnum.sound_ambient && soundEffects[currentSong].State == SoundState.Playing)
+                {
+                    soundEffects[currentSong].Stop();
+                }
+                if (soundEffects[SoundsEnum.sound_ambient].State == SoundState.Stopped)
+                {
+                    currentSong = SoundsEnum.sound_ambient;
+                    soundEffects[currentSong].Play();
+                }
+            }
         }
 
         protected override void Draw(GameTime gameTime)

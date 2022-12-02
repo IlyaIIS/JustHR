@@ -20,8 +20,6 @@ namespace JustHR.Classes.Basic
         Dictionary<Enum, TileSetTileMap> tileMap;
         SpriteBatch spriteBatch;
         Dictionary<Enum, SoundEffectInstance> soundEffects;
-        SoundsEnum currentSong;
-
 
         public Drawer(SpriteBatch spriteBatch , Dictionary<Enum, Texture2D> sprites,
             Dictionary<Enum, SpriteListTileMap> spriteTileMaps, Dictionary<Enum, TileSetTileMap> tileMap, 
@@ -33,41 +31,11 @@ namespace JustHR.Classes.Basic
             this.sprites = sprites;
             this.spriteTileMaps = spriteTileMaps;
             this.fonts = fonts;
-            this.currentSong = SoundsEnum.song_last_christmas_cover;
         }
 
         public void DrawScene(IScene scene)
         {
             spriteBatch.Draw(sprites[scene.Background], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None,0.000f);
-
-            if(scene.Background == BackgroundsEnum.Office)
-            {
-
-                if(soundEffects[currentSong].State == SoundState.Stopped && Player.Mentality >= 25)
-                {
-                    soundEffects[SoundsEnum.sound_ambient].Stop();
-                    if (currentSong == SoundsEnum.song_last_christmas_cover)
-                        currentSong = SoundsEnum.song_the_blizzard_is_ringing;
-                    else if (currentSong == SoundsEnum.song_the_blizzard_is_ringing)
-                        currentSong = SoundsEnum.song_last_christmas_cover;
-                    else 
-                    {
-                        //
-                    }
-                    soundEffects[currentSong].Play();
-                }
-            }
-            else
-            {
-                if(soundEffects[currentSong].State == SoundState.Playing)
-                {
-                    soundEffects[currentSong].Stop();
-                }
-                if (soundEffects[SoundsEnum.sound_ambient].State == SoundState.Stopped)
-                {
-                    soundEffects[SoundsEnum.sound_ambient].Play();
-                }
-            }
 
             if (scene is OfficeScene ofScene)
             {
