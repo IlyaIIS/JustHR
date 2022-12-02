@@ -171,11 +171,12 @@ namespace JustHR.Classes.Basic
         void DrawCharacter(OfficeScene ofScene)
         {
             Character character = ofScene.Objects.Character;
+            int alpha = ofScene.Objects.Character.Alpha;
             float z = 0;
             if (character.IsSitting())
             {
                 z = 0.9f;
-                spriteBatch.Draw(sprites[SpriteEnum.SittingCharacter], character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, 0.9f);
+                spriteBatch.Draw(sprites[SpriteEnum.SittingCharacter], character.Pos, null, new Color(alpha, alpha, alpha, alpha), 0, Vector2.Zero, character.Scale, SpriteEffects.None, 0.9f);
                 spriteTileMaps[ClothesEnum.SittingClothes].Draw(character.ClothNum, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, 0.91f));
             }
             else
@@ -184,10 +185,10 @@ namespace JustHR.Classes.Basic
                 spriteBatch.Draw(sprites[SpriteEnum.Character], character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, z);
                 spriteTileMaps[ClothesEnum.Clothes].Draw(character.ClothNum, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, z + 0.01f));
             }
-            spriteTileMaps[ClothesEnum.Eyes].Draw(character.Traits.Eyes, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, z + 0.02f));
-            spriteTileMaps[ClothesEnum.Hairs].Draw(character.Traits.Hairs, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, z + 0.03f));
+            spriteTileMaps[ClothesEnum.Eyes].Draw(character.Traits.Eyes, (t) => spriteBatch.Draw(t, character.Pos, null, new Color(255, 255, 255, alpha), 0, Vector2.Zero, character.Scale, SpriteEffects.None, z + 0.02f));
+            spriteTileMaps[ClothesEnum.Hairs].Draw(character.Traits.Hairs, (t) => spriteBatch.Draw(t, character.Pos, null, new Color(255, 255, 255, alpha), 0, Vector2.Zero, character.Scale, SpriteEffects.None, z + 0.03f));
             if (character.Traits.Accessory != -1)
-                spriteTileMaps[ClothesEnum.Accessories].Draw(character.Traits.Accessory, (t) => spriteBatch.Draw(t, character.Pos, null, Color.White, 0, Vector2.Zero, character.Scale, SpriteEffects.None, z + 0.04f));
+                spriteTileMaps[ClothesEnum.Accessories].Draw(character.Traits.Accessory, (t) => spriteBatch.Draw(t, character.Pos, null, new Color(255, 255, 255, alpha), 0, Vector2.Zero, character.Scale, SpriteEffects.None, z + 0.04f));
 
             character.DoTick();
         }

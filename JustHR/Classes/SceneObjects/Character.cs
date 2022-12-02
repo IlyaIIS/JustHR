@@ -18,6 +18,7 @@ namespace JustHR.Classes
         public Vector2 Pos { get { return moveAnimator.GetPos(); } }
         private MoveAnimator<CharacterMoveState> moveAnimator;
         public float Scale { get; private set; }
+        public int Alpha { get; set; } = 255;
 
         public int ClothNum { get; }
 

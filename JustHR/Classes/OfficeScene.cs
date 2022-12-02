@@ -174,6 +174,11 @@ namespace JustHR.Classes
                 {
                     SelectedObject = null;
                 }
+
+                if ((new Rectangle(400, 180, 255, 135)).Contains(newPos) && Objects.Character.IsSitting())
+                    Objects.Character.Alpha = 100;
+                else
+                    Objects.Character.Alpha = 255;
             };
 
             controller.OnMouseButtonReleased += (button, x, y) =>
