@@ -158,10 +158,11 @@ namespace JustHR.Classes
             controller.OnMouseMoving += (lastPos, newPos) =>
             {
                 List<ISceneObject> selectedObjects = new List<ISceneObject>();
-                foreach(ISceneObject obj in Objects.ObjectsCollection)
-                    if (obj is IClickable clObj)
-                        if (clObj.Collision.Contains(newPos))
-                            selectedObjects.Add(obj);
+                if (!Objects.CurriculumVitae.IsExpanded)
+                    foreach (ISceneObject obj in Objects.ObjectsCollection)
+                        if (obj is IClickable clObj)
+                            if (clObj.Collision.Contains(newPos))
+                                selectedObjects.Add(obj);
 
                 if (selectedObjects.Count > 0)
                 {

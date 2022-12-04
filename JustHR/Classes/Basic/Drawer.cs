@@ -83,9 +83,10 @@ namespace JustHR.Classes.Basic
         {
             Cooler cooler = ofScene.Objects.Cooler;
 
-            float height = cooler.CofeeLvl * 1.4f;
+            float height = cooler.PringCoffeeLvl * 1.4f;
             spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(260, 380 - height), null, new Color(112, 78, 55, 200), 0, Vector2.Zero, new Vector2(111, height), SpriteEffects.None, ofScene.Objects.Cooler.Z);
             spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Cooler], new Vector2(0, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, ofScene.Objects.Cooler.Z + 0.001f);
+            cooler.ForceCoffeeLvlToNormal();
         }
         void DrawCurriculumVitae(OfficeScene ofScene)
         {
@@ -185,6 +186,8 @@ namespace JustHR.Classes.Basic
         }
         void DrawWhiteboard(OfficeScene ofScene)
         {
+            Whiteboard wb = ofScene.Objects.Whiteboard;
+
             spriteBatch.Draw(sprites[SceneObjectSpriteEnum.Whiteboard], new Vector2(-180, 0), null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.003f);
             string text = "Нужно нанять\n";
             foreach (KeyValuePair<ProfessionEnum, int> pair in ofScene.Requirements)
@@ -198,10 +201,12 @@ namespace JustHR.Classes.Basic
             spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 5, 200), null, new Color(230, 220, 220), 0, Vector2.Zero, new Vector2(18, 100), SpriteEffects.None, 0.0032f);
             spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 7, 200), null, new Color(230, 220, 220), 0, Vector2.Zero, new Vector2(18, 100), SpriteEffects.None, 0.0032f);
 
-            spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20, 200 + (100 - Player.BossSatisfaction)), null, new Color(250 - Player.BossSatisfaction / 2, 170, 65), 0, Vector2.Zero, new Vector2(18, Player.BossSatisfaction), SpriteEffects.None, 0.0035f);
-            spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 3, 200 + (100 - Player.Mentality)), null, new Color(160 - Player.Mentality / 2, 166, 122), 0, Vector2.Zero, new Vector2(18, Player.Mentality), SpriteEffects.None, 0.0035f);
-            spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 5, 200 + (100 - Player.Unity)), null, new Color(245, 193, 126 - Player.Unity / 2), 0, Vector2.Zero, new Vector2(18, Player.Unity), SpriteEffects.None, 0.0035f);
-            spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 7, 200 + (100 - Player.Professionality)), null, new Color(220, 190, 200 - Player.Professionality / 2), 0, Vector2.Zero, new Vector2(18, Player.Professionality), SpriteEffects.None, 0.0035f);
+            spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20, 200 + (100 - wb.BossSatisfaction)), null, new Color(250 - Player.BossSatisfaction / 2, 170, 65), 0, Vector2.Zero, new Vector2(18, wb.BossSatisfaction), SpriteEffects.None, 0.0035f);
+            spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 3, 200 + (100 - wb.Mentality)), null, new Color(160 - Player.Mentality / 2, 166, 122), 0, Vector2.Zero, new Vector2(18, wb.Mentality), SpriteEffects.None, 0.0035f);
+            spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 5, 200 + (100 - wb.Unity)), null, new Color(245, 193, 126 - Player.Unity / 2), 0, Vector2.Zero, new Vector2(18, wb.Unity), SpriteEffects.None, 0.0035f);
+            spriteBatch.Draw(sprites[SpriteEnum.Pixel], new Vector2(800 - 20 * 7, 200 + (100 - wb.Professionality)), null, new Color(220, 190, 200 - Player.Professionality / 2), 0, Vector2.Zero, new Vector2(18, wb.Professionality), SpriteEffects.None, 0.0035f);
+
+            wb.ForceParametersToNormal();
 
         }
         void DrawGarland(OfficeScene ofScene)

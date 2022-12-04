@@ -11,7 +11,8 @@ namespace JustHR.Classes.SceneObjects
     {
         public float Z { get; set; }
         public Rectangle Collision { get; private set; } = new Rectangle(250, 215, 145, 175);
-        public int CofeeLvl { get; set; } = 100;
+        public int PringCoffeeLvl { get; private set; } = 100;
+        public int CoffeeLvl { get; private set; } = 100;
         private float coffeEffectiveness = 1;
         public float CoffeEffectiveness { get { return coffeEffectiveness; } set { coffeEffectiveness = MathHelper.Clamp(value, 0, 1); } }
         private Dictionary<Enum, SoundEffectInstance> soundEffects;
@@ -23,15 +24,20 @@ namespace JustHR.Classes.SceneObjects
 
         public void Click(OfficeScene scene)
         {
-            if (CofeeLvl > 0)
+            if (CoffeeLvl > 0)
             {
                 soundEffects[SoundsEnum.drink_coffee].Stop();
                 soundEffects[SoundsEnum.drink_coffee].Play();
 
-                CofeeLvl -= 10;
+                CoffeeLvl -= 10;
                 Player.Mentality += (int)Math.Round(5 * CoffeEffectiveness);
                 CoffeEffectiveness -= 0.3f;
             }
+        }
+
+        public void ForceCoffeeLvlToNormal()
+        {
+            PringCoffeeLvl += (CoffeeLvl - PringCoffeeLvl) / 10;
         }
     }
 }
