@@ -29,6 +29,7 @@ namespace JustHR.Classes
 
         public BossState BossState { get; private set; }
 
+        public LinkedList<Character> CharactersQueue { get; } = new LinkedList<Character>();
         public List<Character> RecallCharacters { get; } = new List<Character>();
 
         public ISceneObject SelectedObject { get; set; }
@@ -60,7 +61,7 @@ namespace JustHR.Classes
             {
                 SoundEffects[SoundsEnum.phone_btn_sound_2].Play();
                 
-                Character character = this.Objects.Character;
+                Character character = Objects.Character;
                 if (character.IsSitting())
                 {
                     character.Accept();
@@ -153,7 +154,13 @@ namespace JustHR.Classes
 
             GenerateRequirements();
 
-            GenerateBoss();
+            Objects.Character = GetBoss();
+            Objects.Character.Start();
+
+            for (int i = 0; i < 4; i++)
+            {
+                CharactersQueue.AddLast(GetNewCharacter());
+            }
 
             controller.OnMouseMoving += (lastPos, newPos) =>
             {
@@ -222,6 +229,15 @@ namespace JustHR.Classes
 
                 if (Objects.Cat.IsAngry)
                     Objects.Cat.AngryWeight--;
+
+                Random rnd = new Random();
+                if (Hour <= Settings.DayEndHoud)
+                    for (int i = 0; i < rnd.Next(2)+1; i++)
+                        if (CharactersQueue.Count < 12)
+                            CharactersQueue.AddLast(GetNewCharacter());
+
+                if (Objects.Character.IsExited())
+                    CharacterExited();
             }
         }
 
@@ -253,10 +269,26 @@ namespace JustHR.Classes
                 Player.BossSatisfaction > 0 &&
                 BossState == BossState.Default)
             {
-                GenerateNewCharacter();
+                if ((Hour < Settings.DayEndHoud || RecallCharacters.Count == 0) && CharactersQueue.Count > 0)
+                {
+                    Character character = CharactersQueue.First();
+                    CharactersQueue.RemoveFirst();
+                    Objects.Character = character;
+                    Objects.Character.Start();
+                }
+                else if (RecallCharacters.Count > 0)
+                {
+                    Character character = PopRndRecallCharacter();
+                    Objects.Character = character;
+                    Objects.Character.Start();
+                }
             }
             else
-                GenerateBoss();
+            {
+                Character character = GetBoss();
+                Objects.Character = character;
+                Objects.Character.Start();
+            }
         }
 
         public void Exit()
@@ -267,7 +299,15 @@ namespace JustHR.Classes
                 IsDayEnded = true;
         }
 
-        public void GenerateNewCharacter()
+        public Character PopRndRecallCharacter()
+        {
+            Random rnd = new Random();
+            Character character = RecallCharacters[rnd.Next(RecallCharacters.Count)];
+            RecallCharacters.Remove(character);
+            return character;
+        }
+
+        public Character GetNewCharacter()
         {
             //TODO: переделать нахер механику спича
             var speeches = new List<List<string>>
@@ -518,64 +558,51 @@ namespace JustHR.Classes
             };
 
             Random rnd = new Random();
-            if (Hour >= 14 && RecallCharacters.Count > 0)
-            {
-                Character character = RecallCharacters[rnd.Next(RecallCharacters.Count)];
-                RecallCharacters.Remove(character);
-                Objects.Character = character;
-            }
-            else
-            {
-                Vector2 pos = new Vector2(0, 185);
-                int eyes = rnd.Next(5);
-                int hair = rnd.Next(4);
-                int accessory = rnd.Next(3) - 1;
 
-                int clothNum = rnd.Next(5);
+            Vector2 pos = new Vector2(0, 185);
+            int eyes = rnd.Next(5);
+            int hair = rnd.Next(4);
+            int accessory = rnd.Next(3) - 1;
 
-                int rndD = rnd.Next(full_name.Count);
+            int clothNum = rnd.Next(5);
 
-                string firstName = full_name[rndD]; //получать из вне
-                string lastName = "";
-                string patronumic = "";
-                string birthday = (rnd.Next(29) + 1) + "." + (rnd.Next(12) + 1) + "." + (rnd.Next(-10, 11) + 1992);
+            int rndD = rnd.Next(full_name.Count);
 
-                ProfessionEnum professtion = new List<ProfessionEnum>(Requirements.Keys)[rnd.Next(3)];
-                int[] array = new int[] { 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3 };
-                GradeEnum grade = (GradeEnum)array[rnd.Next(array.Length)] - 1;
+            string firstName = full_name[rndD]; //получать из вне
+            string lastName = "";
+            string patronumic = "";
+            string birthday = (rnd.Next(29) + 1) + "." + (rnd.Next(12) + 1) + "." + (rnd.Next(-10, 11) + 1992);
 
-                int professionality = rnd.Next(-10, 11) + (int)grade - rnd.Next((int)(Player.Professionality / 50f - 1) * 4);
-                int socialIntelligence = rnd.Next(-10, 11) - (int)grade - rnd.Next((int)(Player.Unity / 50f - 1) * 4);
+            ProfessionEnum professtion = new List<ProfessionEnum>(Requirements.Keys)[rnd.Next(3)];
+            int[] array = new int[] { 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3 };
+            GradeEnum grade = (GradeEnum)array[rnd.Next(array.Length)] - 1;
 
-                //
-                int index = rnd.Next(speeches.Count);
-                //
+            int professionality = rnd.Next(-10, 11) + (int)grade - rnd.Next((int)(Player.Professionality / 50f - 1) * 4);
+            int socialIntelligence = rnd.Next(-10, 11) - (int)grade - rnd.Next((int)(Player.Unity / 50f - 1) * 4);
 
-                int hairMoraleImpact = speeches_num[index]; //получать из вне
-                int rejectMoraleImpact = -5;
+            //
+            int index = rnd.Next(speeches.Count);
+            //
 
-                int requiredSalary = Settings.AvarajeSalary[grade];
-                requiredSalary = (int)(requiredSalary * (1 + ((float)rnd.NextDouble() - 0.5) * 2 * 0.3f));
+            int hairMoraleImpact = speeches_num[index]; //получать из вне
+            int rejectMoraleImpact = -5;
 
-                List<string> speech = new List<string>(); //получать из вне
-                speech = speeches[index];
-                Character character = new Character(pos, Menu.TextPlace, this, clothNum,
-                    new CharacterTraits(false, firstName, lastName, patronumic, birthday,
-                    eyes, hair, accessory,
-                    professtion, grade,
-                    professionality, socialIntelligence, hairMoraleImpact, rejectMoraleImpact,
-                    requiredSalary, speech), SoundEffects);
+            int requiredSalary = Settings.AvarajeSalary[grade];
+            requiredSalary = (int)(requiredSalary * (1 + ((float)rnd.NextDouble() - 0.5) * 2 * 0.3f));
 
-                Objects.Character = character;
-            }
+            List<string> speech = new List<string>(); //получать из вне
+            speech = speeches[index];
+            Character character = new Character(pos, Menu.TextPlace, this, clothNum,
+                new CharacterTraits(false, firstName, lastName, patronumic, birthday,
+                eyes, hair, accessory,
+                professtion, grade,
+                professionality, socialIntelligence, hairMoraleImpact, rejectMoraleImpact,
+                requiredSalary, speech), SoundEffects);
 
-            Objects.Door.State = DoorState.Opend;
-
-            SoundEffects[SoundsEnum.door_opening].Play();
+            return character;
         }
 
-
-        private void GenerateBoss()
+        private Character GetBoss()
         {
             //начало дня
             if (!Objects.Contains(typeof(Character)))
@@ -598,11 +625,8 @@ namespace JustHR.Classes
                     0, 2, 0,
                     ProfessionEnum.Developer, GradeEnum.Senior, 0, 0, 0, 0, 500,
                     text2), SoundEffects); //Директор
-                Objects.Character = character;
 
-                Objects.Door.State = DoorState.Opend;
-
-                SoundEffects[SoundsEnum.door_opening].Play();
+                return character;
             }
             else
             {
@@ -681,11 +705,8 @@ namespace JustHR.Classes
                     0, 2, 0,
                     ProfessionEnum.Developer, GradeEnum.Senior, 0, 0, 0, 0, 500,
                     speech), SoundEffects); //Директор
-                Objects.Character = character;
 
-                Objects.Door.State = DoorState.Opend;
-
-                SoundEffects[SoundsEnum.door_opening].Play();
+                return character;
             }
         }
 

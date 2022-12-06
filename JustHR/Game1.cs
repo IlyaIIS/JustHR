@@ -143,16 +143,16 @@ namespace JustHR
             var sprites = new Dictionary<Enum, Texture2D>();
             sprites.Add(BackgroundsEnum.Street, Content.Load<Texture2D>("Sprites/street"));
             sprites.Add(BackgroundsEnum.Office, Content.Load<Texture2D>("Sprites/office_background"));
-            sprites.Add(SpriteEnum.Phone, Content.Load<Texture2D>("Sprites/phone"));
 
+            sprites.Add(SpriteEnum.Phone, Content.Load<Texture2D>("Sprites/phone"));
+            sprites.Add(SpriteEnum.PhonePerson, Content.Load<Texture2D>("Sprites/phone_person"));
             sprites.Add(ButtonEnum.AcceptButton, Content.Load<Texture2D>("Sprites/accept_button"));
             sprites.Add(ButtonEnum.JobResponsibilitiesButton, Content.Load<Texture2D>("Sprites/job_jesponsibilities_button"));
             sprites.Add(ButtonEnum.RecallButton, Content.Load<Texture2D>("Sprites/recall_button"));
             sprites.Add(ButtonEnum.RejectButton, Content.Load<Texture2D>("Sprites/rejected_button"));
             sprites.Add(ButtonEnum.StartButton, Content.Load<Texture2D>("Sprites/start_button"));
             sprites.Add(ButtonEnum.StartDayButton, Content.Load<Texture2D>("Sprites/start_day"));
-
-
+            
             sprites.Add(SpriteEnum.TextPlace, Content.Load<Texture2D>("Sprites/text_place"));
             sprites.Add(SpriteEnum.NextPageArrow, Content.Load<Texture2D>("Sprites/next_page_arrow"));
             sprites.Add(SpriteEnum.Pixel, Content.Load<Texture2D>("Sprites/pixel"));

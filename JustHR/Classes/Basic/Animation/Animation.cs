@@ -13,7 +13,7 @@ namespace JustHR.Classes.Basic.Animations
         public Enum Name { get; }
         public AnimationType Type { get; }
         public int TickNum { get; }
-        public int Tick { get; set; }
+        public int Tick { get; private set; }
         public bool IsOver { get { return Tick >= TickNum - 1; } }
         public event Action OnBoundReached;
         private bool wasOverReached;
@@ -73,6 +73,11 @@ namespace JustHR.Classes.Basic.Animations
             }
 
             throw new Exception("Animation is over");
+        }
+
+        public void Reset()
+        {
+            Tick = 0;
         }
     }
 

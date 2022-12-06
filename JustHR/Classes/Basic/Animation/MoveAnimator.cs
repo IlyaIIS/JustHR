@@ -13,7 +13,7 @@ namespace JustHR.Classes.Basic.Animations
     {
         public MoveAnimation CurAnimation { get; private set; }
         public T AnimationName { get { return (T)CurAnimation.Name; } }
-        Vector2 curPos;
+        public Vector2 PivotalPos { get; set; }
 
         readonly Dictionary<T, MoveAnimation> animationsWithNames;
 
@@ -36,12 +36,12 @@ namespace JustHR.Classes.Basic.Animations
 
             CurAnimation = animationsWithNames[startAnimationName];
 
-            curPos = startPos;
+            PivotalPos = startPos;
         }
 
         public void SetAnimation(T animationName)
         {
-            curPos += CurAnimation.GetPos();
+            PivotalPos += CurAnimation.GetPos();
 
             if (!CurAnimation.Name.Equals(animationName))
             {
@@ -55,12 +55,12 @@ namespace JustHR.Classes.Basic.Animations
                 }
             }
 
-            CurAnimation.Tick = 0;
+            CurAnimation.Reset();
         }
 
         public Vector2 GetPos()
         {
-            return curPos + CurAnimation.GetPos();
+            return PivotalPos + CurAnimation.GetPos();
         }
 
         public void DoTick()

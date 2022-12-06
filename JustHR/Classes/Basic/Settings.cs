@@ -23,5 +23,6 @@ namespace JustHR.Classes.Basic
 
         public static float GlobalVolume { get; } = 0.7f;
         public static float EffectsVolume { get; } = 1f;
+        public static int DayEndHoud { get; } = 15;
     }
 }

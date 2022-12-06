@@ -14,7 +14,7 @@ namespace JustHR.Classes.Basic.Animations
         public Enum Name { get; }
         public AnimationType Type { get; }
         public int TickNum { get; }
-        public int Tick { get; set; }
+        public int Tick { get; private set; }
         public bool IsOver { get { return Tick >= TickNum - 1; } }
         private bool wasOverReached = false;
 
@@ -65,6 +65,12 @@ namespace JustHR.Classes.Basic.Animations
         public Vector2 GetPos()
         {
             return move(this);
+        }
+
+        public void Reset()
+        {
+            Tick = 0;
+            wasOverReached = false;
         }
     }
 }

@@ -288,12 +288,6 @@ namespace JustHR.Classes.Basic
 
                 spriteBatch.DrawString(fonts[FontsEnum.Pixel], text1, new Vector2(320, 560), Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.333f);
 
-
-                int count = (scene as OfficeScene).RecallCharacters.Count;
-                if (count> 0)
-                    spriteBatch.DrawString(fonts[FontsEnum.Pixel], count.ToString(), new Vector2(135, 435), Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 0.533f);
-
-
                 menu.TextPlace.DoTick(soundEffects);
             }
 
@@ -301,6 +295,21 @@ namespace JustHR.Classes.Basic
             foreach(Button btn in menu.Phone.Buttons)
             {
                 spriteBatch.Draw(sprites[btn.Name], btn.Pos, null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0.41f);
+            }
+
+            int width = sprites[SpriteEnum.PhonePerson].Width;
+            if (scene is OfficeScene ofScene)
+            {
+                for (int i = 0; i < ofScene.CharactersQueue.Count; i++)
+                {
+                    Vector2 pos = new Vector2(160 - (width * ofScene.CharactersQueue.Count) / 2 + width * i, 445);
+                    spriteBatch.Draw(sprites[SpriteEnum.PhonePerson], pos, null, Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 0.41f);
+                }
+                for (int i = 0; i < ofScene.RecallCharacters.Count; i++)
+                {
+                    Vector2 pos = new Vector2(160 - (width * ofScene.RecallCharacters.Count) / 2 + width * i, 415);
+                    spriteBatch.Draw(sprites[SpriteEnum.PhonePerson], pos, null, Color.Black, 0, Vector2.Zero, 1, SpriteEffects.None, 0.41f);
+                }
             }
         }
 
@@ -336,6 +345,7 @@ namespace JustHR.Classes.Basic
         Pixel,
         Character,
         SittingCharacter,
+        PhonePerson,
     }
 
     enum SceneObjectSpriteEnum

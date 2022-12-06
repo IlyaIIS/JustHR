@@ -15,6 +15,7 @@ namespace JustHR.Classes
     {
         public float Z { get; set; }
         public bool IsSelectable { get; } = false;
+        private Vector2 startPos;
         public Vector2 Pos { get { return moveAnimator.GetPos(); } }
         private MoveAnimator<CharacterMoveState> moveAnimator;
         public float Scale { get; private set; }
@@ -34,6 +35,20 @@ namespace JustHR.Classes
         public bool IsSitting()
         {
             return moveAnimator.AnimationName == CharacterMoveState.Sitting && moveAnimator.CurAnimation.IsOver;
+        }
+
+        public bool IsExited()
+        {
+            return (moveAnimator.AnimationName == CharacterMoveState.Rejected || moveAnimator.AnimationName == CharacterMoveState.Accepted) && moveAnimator.CurAnimation.IsOver;
+        }
+
+        public void Start()
+        {
+            scene.Objects.Door.State = DoorState.Opend;
+            SoundEffects[SoundsEnum.door_opening].Play();
+
+            moveAnimator.SetAnimation(CharacterMoveState.MovingToTable);
+            moveAnimator.PivotalPos = startPos;
         }
 
         public void Accept()
@@ -63,12 +78,18 @@ namespace JustHR.Classes
                 if (str.Length > 300)
                     throw new ArgumentException("Слишком длинная реплика"); //todo: вынести проверку в момент загрузки реплик
 
-            moveAnimator = GetMoveAnimator(pos);
+            startPos = pos;
+
+            moveAnimator = GetMoveAnimator();
         }
 
-        private MoveAnimator<CharacterMoveState> GetMoveAnimator(Vector2 pos)
+        private MoveAnimator<CharacterMoveState> GetMoveAnimator()
         {
             var animations = new List<MoveAnimation>();
+            animations.Add(new MoveAnimation(CharacterMoveState.Idle, AnimationType.Default, 0, (self) =>
+            {
+                return new Vector2(0,0);
+            }));
             animations.Add(new MoveAnimation(CharacterMoveState.MovingToTable, AnimationType.Default, 30, (self) =>
             {
                 Scale = 0.8f + (0.2f / self.TickNum) * self.Tick;
@@ -127,33 +148,34 @@ namespace JustHR.Classes
                 scene.CharacterExited();
             };
 
-            MoveAnimator<CharacterMoveState> moveAnimator = new MoveAnimator<CharacterMoveState>(animations, CharacterMoveState.MovingToTable, pos);
+            MoveAnimator<CharacterMoveState> moveAnimator = new MoveAnimator<CharacterMoveState>(animations, CharacterMoveState.Idle, startPos);
 
             moveAnimator.OnAnimationOver += (animator) =>
             {
-                switch (animator.CurAnimation.Name)
-                {
-                    case CharacterMoveState.MovingToTable:
-                        animator.SetAnimation(CharacterMoveState.MovingRightAlongTable);
-                        break;
-                    case CharacterMoveState.MovingRightAlongTable:
-                        animator.SetAnimation(CharacterMoveState.Sitting);
-                        break;
-                    case CharacterMoveState.Sitting:
-                        break;
-                    case CharacterMoveState.StandUpping:
-                        if (isAccepted)
-                            animator.SetAnimation(CharacterMoveState.Accepted);
-                        else
-                            animator.SetAnimation(CharacterMoveState.Rejected);
-                        break;
-                    case CharacterMoveState.Rejected:
-                        break;
-                    case CharacterMoveState.Accepted:
-                        break;
-                    default:
-                        break;
-                }
+                if (animator.CurAnimation.IsOver)
+                    switch (animator.CurAnimation.Name)
+                    {
+                        case CharacterMoveState.MovingToTable:
+                            animator.SetAnimation(CharacterMoveState.MovingRightAlongTable);
+                            break;
+                        case CharacterMoveState.MovingRightAlongTable:
+                            animator.SetAnimation(CharacterMoveState.Sitting);
+                            break;
+                        case CharacterMoveState.Sitting:
+                            break;
+                        case CharacterMoveState.StandUpping:
+                            if (isAccepted)
+                                animator.SetAnimation(CharacterMoveState.Accepted);
+                            else
+                                animator.SetAnimation(CharacterMoveState.Rejected);
+                            break;
+                        case CharacterMoveState.Rejected:
+                            break;
+                        case CharacterMoveState.Accepted:
+                            break;
+                        default:
+                            break;
+                    }
             };
 
             return moveAnimator;
@@ -218,6 +240,7 @@ namespace JustHR.Classes
 
     enum CharacterMoveState
     {
+        Idle,
         MovingToTable,
         MovingRightAlongTable,
         Sitting,

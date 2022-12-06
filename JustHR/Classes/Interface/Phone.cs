@@ -54,5 +54,6 @@ namespace JustHR.Classes.Interface
         RejectButton,
         StartButton,
         StartDayButton,
+        
     }
 }

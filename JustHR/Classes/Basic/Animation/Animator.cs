@@ -48,7 +48,7 @@ namespace JustHR.Classes.Basic.Animations
                 }
             }
 
-            CurAnimation.Tick = 0;
+            CurAnimation.Reset();
         }
 
         public int GetFrame()
