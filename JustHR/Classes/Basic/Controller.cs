@@ -47,6 +47,8 @@ namespace JustHR.Classes.Basic
         public event MouseMoveHandler OnMouseMoving;
 
         private Point lastMousePos;
+        public Point MousePosOffset { get; set; }
+        public float MousePosScale { get; set; } = 1;
 
         /// <summary>Активирует заданные контроллеру действия, если произошли соответствующие им события (например нажатие кнопки).</summary>
         public void TriggerControlEvents()
@@ -61,6 +63,7 @@ namespace JustHR.Classes.Basic
         private void TriggerEvents(KeyboardState keyState, MouseState mouseState)
         {
             TriggerKeyEvents();
+            Point mousePos = new Point((int)((mouseState.Position.X + MousePosOffset.X) * MousePosScale),(int)((mouseState.Position.Y + MousePosOffset.Y) * MousePosScale));
             TriggetMouseMoveEvent();
             TriggerMouseButtonEvents();
             TriggerMouseScrollEvents();
@@ -91,8 +94,18 @@ namespace JustHR.Classes.Basic
                     }
                 }
             }
+            void TriggetMouseMoveEvent()
+            {
+                if (!mouseState.Position.Equals(lastMousePos))
+                {
+                    OnMouseMoving?.Invoke(lastMousePos, mousePos);
+                    lastMousePos = mousePos;
+                }
+            }
             void TriggerMouseButtonEvents()
             {
+                
+
                 TriggerMouseCertainButtonEvents(mouseState.LeftButton, MouseButton.LeftButton);
                 TriggerMouseCertainButtonEvents(mouseState.MiddleButton, MouseButton.MiddleButton);
                 TriggerMouseCertainButtonEvents(mouseState.RightButton, MouseButton.RightButton);
@@ -103,11 +116,11 @@ namespace JustHR.Classes.Basic
                     {
                         if (wasMouseButtonPressed[certainButton])
                         {
-                            //OnMouseButtonPressing(certainButton, mouseState.X, mouseState.Y, tile);
+                            //OnMouseButtonPressing(certainButton, mousePos.X, mousePos.Y, tile);
                         }
                         else
                         {
-                            //OnMouseButtonPressed(certainButton, mouseState.X, mouseState.Y, tile);
+                            //OnMouseButtonPressed(certainButton, mousePos.X, mousePos.Y, tile);
                             wasMouseButtonPressed[certainButton] = true;
                         }
                     }
@@ -115,7 +128,7 @@ namespace JustHR.Classes.Basic
                     {
                         if (wasMouseButtonPressed[certainButton])
                         {
-                            OnMouseButtonReleased(certainButton, mouseState.X, mouseState.Y);
+                            OnMouseButtonReleased(certainButton, mousePos.X, mousePos.Y);
                             wasMouseButtonPressed[certainButton] = false;
                         }
                     }
@@ -128,14 +141,6 @@ namespace JustHR.Classes.Basic
                 if (mouseState.ScrollWheelValue < preMouseScroll)
                     //OnMouseScroll(-1);
                 preMouseScroll = mouseState.ScrollWheelValue;
-            }
-            void TriggetMouseMoveEvent()
-            {
-                if (!mouseState.Position.Equals(lastMousePos))
-                {
-                    OnMouseMoving?.Invoke(lastMousePos, mouseState.Position);
-                    lastMousePos = mouseState.Position;
-                }
             }
         }
 

@@ -18,6 +18,7 @@ namespace JustHR
         Effect waveShader;
         Effect wrapShader;
         RenderTarget2D canvas;
+        RenderTarget2D mainCanvas;
         RenderTarget2D wrapCanvas;
 
         private GraphicsDeviceManager graphics;
@@ -45,7 +46,7 @@ namespace JustHR
             IsFixedTimeStep = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1d / Settings.FPS);
 
-            Window.AllowUserResizing = false;
+            Window.AllowUserResizing = true;
             Window.AllowAltF4 = false;
             Window.Title = "JustHR";
 
@@ -86,6 +87,7 @@ namespace JustHR
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            mainCanvas = new RenderTarget2D(GraphicsDevice, Settings.WindowWidth, Settings.WindowHeight);
             canvas = new RenderTarget2D(GraphicsDevice, Settings.WindowWidth, Settings.WindowHeight);
             wrapCanvas = new RenderTarget2D(GraphicsDevice, Settings.WindowWidth, Settings.WindowHeight);
 
@@ -372,8 +374,8 @@ namespace JustHR
             spriteBatch.End();
 
 
-            GraphicsDevice.SetRenderTarget(null);
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.SetRenderTarget(mainCanvas);
+            GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin(effect: waveShader, samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
 
             spriteBatch.Draw(canvas, new Vector2(0, 0), Color.White);
@@ -384,6 +386,29 @@ namespace JustHR
             spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
 
             drawer.DrawMenu(currentScene.Menu, currentScene);
+
+            spriteBatch.End();
+
+
+            GraphicsDevice.SetRenderTarget(null);
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+
+            float scale;
+            Vector2 offset;
+            if ((float)graphics.PreferredBackBufferWidth / graphics.PreferredBackBufferHeight > (float)Settings.WindowWidth / Settings.WindowHeight)
+            {
+                scale = (float)graphics.PreferredBackBufferHeight / Settings.WindowHeight;
+                offset = new Vector2((graphics.PreferredBackBufferWidth - Settings.WindowWidth * scale) / 2, 0);
+            }
+            else
+            {
+                scale = (float)graphics.PreferredBackBufferWidth / Settings.WindowWidth;
+                offset = new Vector2(0, (graphics.PreferredBackBufferHeight - Settings.WindowHeight * scale) / 2);
+            }
+            controller.MousePosScale = 1/scale;
+            controller.MousePosOffset = new Point(-(int)offset.X, -(int)offset.Y);
+            
+            spriteBatch.Draw(mainCanvas, offset, null, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 1);
 
             spriteBatch.End();
 
